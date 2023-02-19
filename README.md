@@ -3,20 +3,21 @@
 <h1 align="center">Welcome to the Pet-Mk-VII repository</h1>
 <h1 align="center">The ROS2 Ackermann Vehicle/Robot</h1>
 
-ROS repository in the https://github.com/Pet-Series Git-Organizations.</br>
-Containing multiply ROS1/ROS2-packages.
+ROS2 repository in the https://github.com/Pet-Series Git-Organizations.</br>
+Containing multiply ROS1/ROS2-packages ((Robot Operating System).
 
 # Software/Setup Pet series micro robots #
 The main objective/scope for this repository is to control the part of the software (and parameter settings) that is unique for this Pet Mark VII (seven) robot. A.k.a "The Ackermann".
 
-ROS2 (Robot Operating System v2) is used as middleware.
-Ubuntu is used as operating system.
+**Ubuntu** is used as operating system<br>
+**Docker** is used as image/container system for ROS2<br>
+**ROS2** is used as middleware<br>
 
 # The journey is the goal
 <table>
-    <tr>Pet-Mk.VIII early iterations
-      <td>..image 1...<br><img src="./doc/Pet-Mk.VII_build_phase_00(design_iterations).png" width="400px"></td>
-      <td>..image 1...<br><img src="./doc/Pet-Mk.VII_build_phase_01(dummy).png" width="400px"></td>
+    <tr>Pet-Mk.VII early iterations
+      <td>..image 1...<br><img src="./doc/pet-mk-vii_chassi_mockup01.jpg" width="400px"></td>
+      <td>..image 1...<br><img src="./doc/pet-mk-vii_chassi_mockup02.jpg" width="400px"></td>
     </tr>
 </table>
 
