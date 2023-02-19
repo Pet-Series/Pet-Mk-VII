@@ -4,7 +4,8 @@
 <h1 align="center">The ROS2 Ackermann Vehicle/Robot</h1>
 
 ROS2 repository in the https://github.com/Pet-Series Git-Organizations.</br>
-Containing multiply ROS1/ROS2-packages ((Robot Operating System).
+Containing multiply ROS1/ROS2-packages (Robot Operating System).<br>
+⚠️*This documentation is under construction... As well as the project itself*
 
 # Software/Setup Pet series micro robots #
 The main objective/scope for this repository is to control the part of the software (and parameter settings) that is unique for this Pet Mark VII (seven) robot. A.k.a "The Ackermann".
