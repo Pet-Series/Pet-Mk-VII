@@ -5,6 +5,10 @@
 
 #include <ugl/lie_group/pose.h>
 
+#include <rclcpp/rclcpp.hpp>
+
+#include <visualization_msgs/msg/marker.hpp>
+
 #include <iostream>
 #include <optional>
 #include <vector>
@@ -12,7 +16,24 @@
 namespace pet
 {
 
-void main()
+class RrtSimulation : public rclcpp::Node
+{
+  public:
+    RrtSimulation() : Node("rrt_simulation")
+    {
+        m_marker_publisher = this->create_publisher<visualization_msgs::msg::Marker>("topic", 10);
+    }
+
+    void runRrt();
+
+  private:
+    void visualizePath(const std::vector<rrt::Node> &path);
+
+  private:
+    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_marker_publisher;
+};
+
+void RrtSimulation::runRrt()
 {
     const rrt::VehicleFootprint footprint{{-0.02, 0.05}, {0.18, 0.05}};
     const rrt::CollisionMap     map{};
@@ -42,13 +63,34 @@ void main()
         }
     }
 
-    std::cout << "...done." << std::endl;
+    std::cout << "...search done." << std::endl;
 
-    // visualiseMap(map);
-    // visualisePath(path);
-    // visualiseSearchHistory(searchHistory);
+    std::cout << "Starting visualization..." << std::endl;
+    if (path.has_value())
+    {
+        visualizePath(path.value());
+    }
+    // visualizeMap(map);
+    // visualizeSearchHistory(searchHistory);
+    std::cout << "...visualization done." << std::endl;
+}
+
+void RrtSimulation::visualizePath(const std::vector<rrt::Node> &path)
+{
+    auto message = visualization_msgs::msg::Marker();
+    m_marker_publisher->publish(message);
 }
 
 } // namespace pet
 
-int main() { pet::main(); }
+int main(int argc, char *argv[])
+{
+    rclcpp::init(argc, argv);
+
+    const auto rosNode = std::make_shared<pet::RrtSimulation>();
+    rosNode->runRrt();
+
+    rclcpp::spin(rosNode);
+    rclcpp::shutdown();
+    return 0;
+}

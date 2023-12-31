@@ -27,8 +27,12 @@ target_sources(rrt_simulation
 )
 
 target_link_libraries(rrt_simulation
-  PRIVATE
     rrt
+)
+
+ament_target_dependencies(rrt_simulation 
+    rclcpp
+    visualization_msgs
 )
 
 install(TARGETS

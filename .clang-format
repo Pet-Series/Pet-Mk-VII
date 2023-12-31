@@ -5,6 +5,8 @@ Language: Cpp
 IndentWidth: 4
 AccessModifierOffset: -2
 
+ColumnLimit: 100
+
 AlignConsecutiveDeclarations: Consecutive 
 
 BreakBeforeBraces: Custom
