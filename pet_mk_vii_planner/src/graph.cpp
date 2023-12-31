@@ -57,8 +57,13 @@ std::vector<Node> Graph::getPathFromRoot(const Node &node) const
 const Node &Graph::storeNode(const Node &node)
 {
     m_nodes.push_back(node);
-    m_nodes.back().id = m_nodes.size() - 1;
-    return m_nodes.back();
+    Node &storedNode = m_nodes.back();
+    storedNode.id = m_nodes.size() - 1;
+    if (storedNode.parentId != -1)
+    {
+        m_nodes[storedNode.parentId].childrenIds.push_back(storedNode.id);
+    }
+    return storedNode;
 }
 
 } // namespace pet::rrt

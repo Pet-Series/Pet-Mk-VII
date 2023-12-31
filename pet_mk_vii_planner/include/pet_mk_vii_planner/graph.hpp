@@ -18,6 +18,7 @@ struct Node
 {
     int id;
     int parentId;
+    std::vector<int> childrenIds;
 
     ugl::lie::Pose state;
     ControlInput   controlInput;
