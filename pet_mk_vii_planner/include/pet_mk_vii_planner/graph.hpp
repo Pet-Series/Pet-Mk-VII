@@ -9,6 +9,7 @@ namespace pet::rrt
 
 struct ControlInput
 {
+    double duration;
     double linear_velocity;
     double angular_velocity;
 };
