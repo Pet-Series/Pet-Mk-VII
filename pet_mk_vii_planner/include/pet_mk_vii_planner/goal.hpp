@@ -12,6 +12,8 @@ class Goal
 
     ugl::lie::Pose sampleState() const;
 
+    bool isReached(const ugl::lie::Pose &state) const;
+
   private:
     ugl::lie::Pose m_goalPose;
 

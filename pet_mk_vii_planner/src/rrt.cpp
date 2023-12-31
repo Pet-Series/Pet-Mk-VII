@@ -17,9 +17,7 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
 
         const Node &newNode = tree.addNode(sampledState, controlInput, parentNode);
 
-        /// TODO: Add check if result from steering is in goal.
-        const bool goalReached = true;
-        if (goalReached)
+        if (goal.isReached(sampledState))
         {
             return tree.getPathFromRoot(newNode);
         }
