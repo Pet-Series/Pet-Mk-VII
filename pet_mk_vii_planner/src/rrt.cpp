@@ -3,10 +3,28 @@
 namespace pet::rrt
 {
 
-bool search(const Goal &goalPose, Graph &searchTree,
-            const SearchContext &context)
+std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
+                                        const SearchContext &context)
 {
-    return false;
+    const auto sampledState = goal.sampleState();
+
+    const Node &parentNode = tree.findClosest(sampledState);
+
+    /// TODO: Add steering function.
+    ControlInput controlInput{};
+
+    const Node &newNode = tree.addNode(sampledState, controlInput, parentNode);
+
+    /// TODO: Add check if result from steering is in goal.
+    const bool goalReached = true;
+    if (goalReached)
+    {
+        return tree.getPathFromRoot(newNode);
+    }
+    else
+    {
+        return {};
+    }
 }
 
 } // namespace pet::rrt

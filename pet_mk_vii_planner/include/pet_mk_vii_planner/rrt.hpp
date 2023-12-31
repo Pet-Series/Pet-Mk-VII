@@ -4,6 +4,9 @@
 #include "pet_mk_vii_planner/goal.hpp"
 #include "pet_mk_vii_planner/graph.hpp"
 
+#include <optional>
+#include <vector>
+
 namespace pet::rrt
 {
 
@@ -15,7 +18,7 @@ struct SearchContext
     CollisionMap     m_collisionMap;
 };
 
-bool search(const Goal &goalPose, Graph &searchTree,
-            const SearchContext &context);
+std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
+                                        const SearchContext &context);
 
 } // namespace pet::rrt

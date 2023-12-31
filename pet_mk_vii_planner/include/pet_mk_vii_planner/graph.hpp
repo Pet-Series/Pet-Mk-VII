@@ -15,9 +15,11 @@ struct ControlInput
 
 struct Node
 {
+    int m_id;
+    int m_parentId;
+
     ugl::lie::Pose m_state;
     ControlInput   m_controlInput;
-    Node          *m_parentNode;
 };
 
 class Graph
@@ -25,12 +27,18 @@ class Graph
   public:
     Graph(const ugl::lie::Pose &startingState);
 
-    // void addRootNode(const Node &rootNode);
+    const Node &addNode(const ugl::lie::Pose &state,
+                        const ControlInput &controlInput, const Node &parent);
 
-    std::vector<Node> getPath() const;
+    const Node &findClosest(const ugl::lie::Pose &targetPose) const;
+
+    std::vector<Node> getPathFromRoot(const Node &node) const;
 
   private:
-    std::vector<Node> m_nodes{};
+    const Node &storeNode(const Node &node);
+
+  private:
+    std::vector<Node> m_nodes;
 };
 
 } // namespace pet::rrt

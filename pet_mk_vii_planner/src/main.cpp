@@ -6,6 +6,7 @@
 #include <ugl/lie_group/pose.h>
 
 #include <iostream>
+#include <optional>
 #include <vector>
 
 namespace pet
@@ -14,7 +15,8 @@ namespace pet
 void main()
 {
     const rrt::VehicleFootprint footprint{{-0.02, 0.05}, {0.18, 0.05}};
-    const rrt::SearchContext    context{10, footprint, rrt::CollisionMap{}};
+    const rrt::CollisionMap     map{};
+    const rrt::SearchContext    context{10, footprint, map};
 
     const ugl::lie::Pose startPose = ugl::lie::Pose::Identity();
     const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(),
@@ -24,22 +26,26 @@ void main()
     const rrt::Goal goal{goalPose};
 
     std::vector<rrt::Graph> searchHistory{};
+    std::optional<std::vector<rrt::Node>> path{};
+
+    std::cout << "Starting search..." << std::endl;
     for (int i = 0; i < 100; ++i)
     {
-        const bool goalFound = rrt::search(goal, searchTree, context);
+        path = rrt::search(goal, searchTree, context);
 
         searchHistory.push_back(searchTree);
 
-        if (goalFound)
+        if (path.has_value())
         {
-            /// TODO: Celebrate!
+            std::cout << "Goal found!" << std::endl;
             break;
         }
     }
 
-    std::cout << "Done!" << std::endl;
+    std::cout << "...done." << std::endl;
 
-    // visualisePath(searchTree.getPath());
+    // visualiseMap(map);
+    // visualisePath(path);
     // visualiseSearchHistory(searchHistory);
 }
 

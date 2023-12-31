@@ -10,6 +10,8 @@ class Goal
   public:
     explicit Goal(const ugl::lie::Pose &goalPose) : m_goalPose(goalPose){};
 
+    ugl::lie::Pose sampleState() const;
+
   private:
     ugl::lie::Pose m_goalPose;
 
