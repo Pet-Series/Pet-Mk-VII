@@ -1,6 +1,7 @@
 #include "pet_mk_vii_planner/graph.hpp"
 
 #include <algorithm>
+#include <limits>
 
 namespace pet::rrt
 {
@@ -23,10 +24,21 @@ const Node &Graph::addNode(const ugl::lie::Pose &state,
     return storeNode(node);
 }
 
-const Node &Graph::findClosest(const ugl::lie::Pose &targetPose) const
+Node Graph::findClosest(const ugl::lie::Pose &targetPose) const
 {
-    /// TODO: Implement nearest neighbour.
-    return m_nodes.back();
+    /// TODO: Implement some sort of tree- and/or bucket- system to improve performance.
+    Node   nearestNode = m_nodes.back();
+    double minDistance = std::numeric_limits<double>::infinity();
+    for (const auto &node : m_nodes)
+    {
+        const double distance = ugl::lie::ominus(node.m_state, targetPose).squaredNorm();
+        if (distance < minDistance)
+        {
+            minDistance = distance;
+            nearestNode = node;
+        }
+    }
+    return nearestNode;
 }
 
 std::vector<Node> Graph::getPathFromRoot(const Node &node) const

@@ -31,7 +31,7 @@ class Graph
     const Node &addNode(const ugl::lie::Pose &state,
                         const ControlInput &controlInput, const Node &parent);
 
-    const Node &findClosest(const ugl::lie::Pose &targetPose) const;
+    Node findClosest(const ugl::lie::Pose &targetPose) const;
 
     std::vector<Node> getPathFromRoot(const Node &node) const;
 
