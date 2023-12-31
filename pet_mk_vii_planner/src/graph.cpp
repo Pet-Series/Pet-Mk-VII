@@ -5,6 +5,12 @@
 
 namespace pet::rrt
 {
+namespace
+{
+
+bool isRoot(const Node &node) { return node.parentId == -1; }
+
+} // namespace
 
 Graph::Graph(const ugl::lie::Pose &startingState)
 {
@@ -45,7 +51,7 @@ std::vector<Node> Graph::getPathFromRoot(const Node &node) const
 {
     Node              currentNode = node;
     std::vector<Node> path{currentNode};
-    while (currentNode.parentId > -1)
+    while (!isRoot(currentNode))
     {
         currentNode = m_nodes[currentNode.parentId];
         path.push_back(currentNode);
@@ -59,7 +65,7 @@ const Node &Graph::storeNode(const Node &node)
     m_nodes.push_back(node);
     Node &storedNode = m_nodes.back();
     storedNode.id = m_nodes.size() - 1;
-    if (storedNode.parentId != -1)
+    if (!isRoot(storedNode))
     {
         m_nodes[storedNode.parentId].childrenIds.push_back(storedNode.id);
     }
