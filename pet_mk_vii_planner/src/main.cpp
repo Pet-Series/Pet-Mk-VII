@@ -7,8 +7,10 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <geometry_msgs/msg/point.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 
+#include <chrono>
 #include <iostream>
 #include <optional>
 #include <vector>
@@ -16,12 +18,15 @@
 namespace pet
 {
 
+using namespace std::chrono_literals;
+
 class RrtSimulation : public rclcpp::Node
 {
   public:
     RrtSimulation() : Node("rrt_simulation")
     {
-        m_marker_publisher = this->create_publisher<visualization_msgs::msg::Marker>("topic", 10);
+        m_marker_publisher =
+            this->create_publisher<visualization_msgs::msg::Marker>("rrt_found_path", 10);
     }
 
     void runRrt();
@@ -77,8 +82,30 @@ void RrtSimulation::runRrt()
 
 void RrtSimulation::visualizePath(const std::vector<rrt::Node> &path)
 {
-    auto message = visualization_msgs::msg::Marker();
-    m_marker_publisher->publish(message);
+    auto marker = visualization_msgs::msg::Marker();
+
+    marker.header.frame_id = "map";
+    marker.header.stamp = rclcpp::Time{0};
+    marker.ns = "rrt";
+    marker.id = 0;
+    marker.lifetime = rclcpp::Duration{0, 0};
+    marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
+    marker.action = visualization_msgs::msg::Marker::ADD;
+    marker.scale.x = 0.1;
+    marker.scale.y = 0.1;
+    marker.scale.z = 0.1;
+    marker.color.g = 1.0;
+    marker.color.a = 1.0;
+
+    for (const auto &node : path)
+    {
+        geometry_msgs::msg::Point point{};
+        point.x = node.m_state.position().x();
+        point.y = node.m_state.position().y();
+        marker.points.push_back(point);
+    }
+
+    m_marker_publisher->publish(marker);
 }
 
 } // namespace pet

@@ -31,8 +31,9 @@ target_link_libraries(rrt_simulation
 )
 
 ament_target_dependencies(rrt_simulation 
-    rclcpp
+    geometry_msgs
     visualization_msgs
+    rclcpp
 )
 
 install(TARGETS
