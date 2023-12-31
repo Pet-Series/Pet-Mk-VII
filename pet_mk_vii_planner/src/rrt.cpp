@@ -1,5 +1,12 @@
 #include "pet_mk_vii_planner/rrt.hpp"
 
+#include <ugl/random/uniform_distribution.h>
+
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
+
+#include <cmath>
+
 namespace pet::rrt
 {
 
@@ -8,8 +15,7 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
 {
     for (int i = 0; i < context.m_iterations; ++i)
     {
-        /// TODO: Sample from search space or from goal space.
-        const auto sampledState = goal.sampleState();
+        const auto sampledState = sampleState(goal, context.m_searchSpace);
 
         const Node &parentNode = tree.findClosest(sampledState);
 
@@ -27,6 +33,35 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
     }
 
     return {};
+}
+
+ugl::lie::Pose sampleState(const Goal &goal, const BoundingBox &searchSpace)
+{
+    if (shouldSampleFromGoal())
+    {
+        return goal.sampleState();
+    }
+    else
+    {
+        const ugl::Vector<2> position = ugl::random::UniformDistribution<2>::sample(
+            searchSpace.m_min, searchSpace.m_max);
+        const double heading = ugl::random::UniformDistribution<1>::sample(0.0, 2 * M_PI);
+
+        const ugl::UnitQuaternion quaternion{
+            Eigen::AngleAxisd{heading, Eigen::Vector3d::UnitZ()}};
+
+        ugl::lie::Pose state{};
+        state.set_position({position.x(), position.y(), 0.0});
+        state.set_rotation(ugl::lie::Rotation{quaternion});
+
+        return state;
+    }
+}
+
+bool shouldSampleFromGoal()
+{
+    static constexpr double goalProbability = 0.1;
+    return ugl::random::UniformDistribution<1>::sample(0.0, 1.0) < goalProbability;
 }
 
 std::optional<std::pair<ControlInput, ugl::lie::Pose>>

@@ -17,6 +17,8 @@ target_link_libraries(rrt
   PUBLIC
     ugl::math
     ugl::lie_group
+  PRIVATE
+    ugl::random
 )
 
 add_executable(rrt_simulation)

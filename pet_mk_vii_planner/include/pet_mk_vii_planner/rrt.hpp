@@ -18,11 +18,16 @@ struct SearchContext
     int m_iterations;
 
     VehicleFootprint m_vehicleFootprint;
+    BoundingBox      m_searchSpace;
     CollisionMap     m_collisionMap;
 };
 
 std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
                                         const SearchContext &context);
+
+ugl::lie::Pose sampleState(const Goal &goal, const BoundingBox &searchSpace);
+
+bool shouldSampleFromGoal();
 
 std::optional<std::pair<ControlInput, ugl::lie::Pose>>
 tryConnect(const ugl::lie::Pose &start, const ugl::lie::Pose &desiredEnd,

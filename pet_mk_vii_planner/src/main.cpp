@@ -41,8 +41,9 @@ class RrtSimulation : public rclcpp::Node
 void RrtSimulation::runRrt()
 {
     const rrt::VehicleFootprint footprint{{-0.02, 0.05}, {0.18, 0.05}};
+    const rrt::BoundingBox      searchSpace{{-10.0, -10.0}, {10.0, 10.0}};
     const rrt::CollisionMap     map{};
-    const rrt::SearchContext    context{10, footprint, map};
+    const rrt::SearchContext    context{10, footprint, searchSpace, map};
 
     const ugl::lie::Pose startPose = ugl::lie::Pose::Identity();
     const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(),
@@ -91,9 +92,7 @@ void RrtSimulation::visualizePath(const std::vector<rrt::Node> &path)
     marker.lifetime = rclcpp::Duration{0, 0};
     marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
     marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.scale.x = 0.1;
-    marker.scale.y = 0.1;
-    marker.scale.z = 0.1;
+    marker.scale.x = 0.02;
     marker.color.g = 1.0;
     marker.color.a = 1.0;
 
