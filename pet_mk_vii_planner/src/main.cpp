@@ -25,7 +25,7 @@ class RrtSimulation : public rclcpp::Node
   public:
     RrtSimulation() : Node("rrt_simulation")
     {
-        m_marker_publisher =
+        m_markerPublisher =
             this->create_publisher<visualization_msgs::msg::Marker>("rrt_found_path", 10);
     }
 
@@ -35,7 +35,7 @@ class RrtSimulation : public rclcpp::Node
     void visualizePath(const std::vector<rrt::Node> &path);
 
   private:
-    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_marker_publisher;
+    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_markerPublisher;
 };
 
 void RrtSimulation::runRrt()
@@ -99,12 +99,12 @@ void RrtSimulation::visualizePath(const std::vector<rrt::Node> &path)
     for (const auto &node : path)
     {
         geometry_msgs::msg::Point point{};
-        point.x = node.m_state.position().x();
-        point.y = node.m_state.position().y();
+        point.x = node.state.position().x();
+        point.y = node.state.position().y();
         marker.points.push_back(point);
     }
 
-    m_marker_publisher->publish(marker);
+    m_markerPublisher->publish(marker);
 }
 
 } // namespace pet

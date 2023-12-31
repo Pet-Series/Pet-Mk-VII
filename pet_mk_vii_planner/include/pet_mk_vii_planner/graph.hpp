@@ -16,11 +16,11 @@ struct ControlInput
 
 struct Node
 {
-    int m_id;
-    int m_parentId;
+    int id;
+    int parentId;
 
-    ugl::lie::Pose m_state;
-    ControlInput   m_controlInput;
+    ugl::lie::Pose state;
+    ControlInput   controlInput;
 };
 
 class Graph

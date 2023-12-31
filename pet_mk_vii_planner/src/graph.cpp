@@ -9,8 +9,8 @@ namespace pet::rrt
 Graph::Graph(const ugl::lie::Pose &startingState)
 {
     Node rootNode{};
-    rootNode.m_parentId = -1;
-    rootNode.m_state = startingState;
+    rootNode.parentId = -1;
+    rootNode.state = startingState;
     storeNode(rootNode);
 }
 
@@ -18,9 +18,9 @@ const Node &Graph::addNode(const ugl::lie::Pose &state,
                            const ControlInput &controlInput, const Node &parent)
 {
     Node node{};
-    node.m_parentId = parent.m_id;
-    node.m_state = state;
-    node.m_controlInput = controlInput;
+    node.parentId = parent.id;
+    node.state = state;
+    node.controlInput = controlInput;
     return storeNode(node);
 }
 
@@ -31,7 +31,7 @@ Node Graph::findClosest(const ugl::lie::Pose &targetPose) const
     double minDistance = std::numeric_limits<double>::infinity();
     for (const auto &node : m_nodes)
     {
-        const double distance = ugl::lie::ominus(node.m_state, targetPose).squaredNorm();
+        const double distance = ugl::lie::ominus(node.state, targetPose).squaredNorm();
         if (distance < minDistance)
         {
             minDistance = distance;
@@ -45,9 +45,9 @@ std::vector<Node> Graph::getPathFromRoot(const Node &node) const
 {
     Node              currentNode = node;
     std::vector<Node> path{currentNode};
-    while (currentNode.m_parentId > -1)
+    while (currentNode.parentId > -1)
     {
-        currentNode = m_nodes[currentNode.m_parentId];
+        currentNode = m_nodes[currentNode.parentId];
         path.push_back(currentNode);
     }
     std::reverse(path.begin(), path.end());
@@ -57,7 +57,7 @@ std::vector<Node> Graph::getPathFromRoot(const Node &node) const
 const Node &Graph::storeNode(const Node &node)
 {
     m_nodes.push_back(node);
-    m_nodes.back().m_id = m_nodes.size() - 1;
+    m_nodes.back().id = m_nodes.size() - 1;
     return m_nodes.back();
 }
 

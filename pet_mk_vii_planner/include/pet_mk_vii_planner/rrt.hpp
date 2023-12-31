@@ -15,11 +15,11 @@ namespace pet::rrt
 
 struct SearchContext
 {
-    int m_iterations;
+    int maxIterations;
 
-    VehicleFootprint m_vehicleFootprint;
-    BoundingBox      m_searchSpace;
-    CollisionMap     m_collisionMap;
+    VehicleFootprint vehicleFootprint;
+    BoundingBox      searchSpace;
+    CollisionMap     collisionMap;
 };
 
 std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,

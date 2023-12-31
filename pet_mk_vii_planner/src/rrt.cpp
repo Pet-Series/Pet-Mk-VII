@@ -13,14 +13,14 @@ namespace pet::rrt
 std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
                                         const SearchContext &context)
 {
-    for (int i = 0; i < context.m_iterations; ++i)
+    for (int i = 0; i < context.maxIterations; ++i)
     {
-        const auto sampledState = sampleState(goal, context.m_searchSpace);
+        const auto sampledState = sampleState(goal, context.searchSpace);
 
         const Node &parentNode = tree.findClosest(sampledState);
 
         const auto result =
-            tryConnect(parentNode.m_state, sampledState, context.m_collisionMap);
+            tryConnect(parentNode.state, sampledState, context.collisionMap);
         if (result.has_value())
         {
             const auto [controlInput, reachedState] = result.value();
@@ -43,8 +43,8 @@ ugl::lie::Pose sampleState(const Goal &goal, const BoundingBox &searchSpace)
     }
     else
     {
-        const ugl::Vector<2> position = ugl::random::UniformDistribution<2>::sample(
-            searchSpace.m_min, searchSpace.m_max);
+        const ugl::Vector<2> position =
+            ugl::random::UniformDistribution<2>::sample(searchSpace.min, searchSpace.max);
         const double heading = ugl::random::UniformDistribution<1>::sample(0.0, 2 * M_PI);
 
         const ugl::UnitQuaternion quaternion{

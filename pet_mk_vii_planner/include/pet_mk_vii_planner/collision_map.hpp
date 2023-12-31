@@ -8,8 +8,8 @@ namespace pet::rrt
 
 struct BoundingBox
 {
-    ugl::Vector<2> m_min;
-    ugl::Vector<2> m_max;
+    ugl::Vector<2> min;
+    ugl::Vector<2> max;
 };
 
 using VehicleFootprint = BoundingBox;
