@@ -69,18 +69,19 @@ tryConnect(const ugl::lie::Pose &start, const ugl::lie::Pose &desiredEnd,
            const CollisionMap &map)
 {
     /// TODO: Perform collision check against map.
-    const auto delta = ugl::lie::ominus(desiredEnd, start);
-    const auto controlDuration = 1.0;
-    const auto velocity = delta / controlDuration;
+    const ugl::Vector<6> delta = ugl::lie::ominus(desiredEnd, start);
+    const double         controlDuration = 1.0;
+    ugl::Vector<6>       velocity = delta / controlDuration;
+
+    // Set lateral velocity to zero.
+    velocity[4] = 0.0;
+    const ugl::lie::Pose endState = ugl::lie::oplus(start, velocity);
 
     /// TODO: Verify control input against vehicle constraints.
     ControlInput controlInput{};
     controlInput.duration = controlDuration;
-    controlInput.angular_velocity = velocity[2];
-    controlInput.linear_velocity = velocity[3];
-
-    /// TODO: Calculate where we actually arrive with given control inputs.
-    const auto endState = desiredEnd;
+    controlInput.angularVelocity = velocity[2];
+    controlInput.linearVelocity = velocity[3];
 
     return std::pair{controlInput, endState};
 }
