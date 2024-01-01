@@ -35,6 +35,8 @@ class RrtSimulation : public rclcpp::Node
     void visualizePath(const std::vector<rrt::Node> &path);
     void visualizeSearchTree(const rrt::Graph &tree);
 
+    void resetVisualization();
+
   private:
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_markerPublisher;
 };
@@ -42,13 +44,12 @@ class RrtSimulation : public rclcpp::Node
 void RrtSimulation::runRrt()
 {
     const rrt::VehicleFootprint footprint{{-0.02, 0.05}, {0.18, 0.05}};
-    const rrt::BoundingBox      searchSpace{{-10.0, -10.0}, {10.0, 10.0}};
+    const rrt::BoundingBox      searchSpace{{-5.0, -5.0}, {5.0, 5.0}};
     const rrt::CollisionMap     map{};
     const rrt::SearchContext    context{10, footprint, searchSpace, map};
 
     const ugl::lie::Pose startPose = ugl::lie::Pose::Identity();
-    const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(),
-                                  {1.0, 0.0, 0.0}};
+    const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};
 
     rrt::Graph      searchTree{startPose};
     const rrt::Goal goal{goalPose};
@@ -73,6 +74,7 @@ void RrtSimulation::runRrt()
     std::cout << "...search done." << std::endl;
 
     std::cout << "Starting visualization..." << std::endl;
+    resetVisualization();
     if (path.has_value())
     {
         visualizePath(path.value());
@@ -84,7 +86,7 @@ void RrtSimulation::runRrt()
 
 void RrtSimulation::visualizePath(const std::vector<rrt::Node> &path)
 {
-    auto marker = visualization_msgs::msg::Marker();
+    visualization_msgs::msg::Marker marker{};
 
     marker.header.frame_id = "map";
     marker.header.stamp = rclcpp::Time{0};
@@ -111,7 +113,7 @@ void RrtSimulation::visualizePath(const std::vector<rrt::Node> &path)
 
 void RrtSimulation::visualizeSearchTree(const rrt::Graph &tree)
 {
-    auto marker = visualization_msgs::msg::Marker();
+    visualization_msgs::msg::Marker marker{};
 
     marker.header.frame_id = "map";
     marker.header.stamp = rclcpp::Time{0};
@@ -143,6 +145,13 @@ void RrtSimulation::visualizeSearchTree(const rrt::Graph &tree)
         }
     });
 
+    m_markerPublisher->publish(marker);
+}
+
+void RrtSimulation::resetVisualization()
+{
+    visualization_msgs::msg::Marker marker{};
+    marker.action = visualization_msgs::msg::Marker::DELETEALL;
     m_markerPublisher->publish(marker);
 }
 
