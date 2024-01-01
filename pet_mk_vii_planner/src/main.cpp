@@ -33,6 +33,7 @@ class RrtSimulation : public rclcpp::Node
 
   private:
     void visualizePath(const std::vector<rrt::Node> &path);
+    void visualizeSearchTree(const rrt::Graph &tree);
 
   private:
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_markerPublisher;
@@ -77,7 +78,7 @@ void RrtSimulation::runRrt()
         visualizePath(path.value());
     }
     // visualizeMap(map);
-    // visualizeSearchHistory(searchHistory);
+    visualizeSearchTree(searchTree);
     std::cout << "...visualization done." << std::endl;
 }
 
@@ -88,11 +89,11 @@ void RrtSimulation::visualizePath(const std::vector<rrt::Node> &path)
     marker.header.frame_id = "map";
     marker.header.stamp = rclcpp::Time{0};
     marker.ns = "rrt";
-    marker.id = 0;
+    marker.id = 1;
     marker.lifetime = rclcpp::Duration{0, 0};
     marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
     marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.scale.x = 0.02;
+    marker.scale.x = 0.05;
     marker.color.g = 1.0;
     marker.color.a = 1.0;
 
@@ -101,8 +102,46 @@ void RrtSimulation::visualizePath(const std::vector<rrt::Node> &path)
         geometry_msgs::msg::Point point{};
         point.x = node.state.position().x();
         point.y = node.state.position().y();
+        point.z = 0.01;
         marker.points.push_back(point);
     }
+
+    m_markerPublisher->publish(marker);
+}
+
+void RrtSimulation::visualizeSearchTree(const rrt::Graph &tree)
+{
+    auto marker = visualization_msgs::msg::Marker();
+
+    marker.header.frame_id = "map";
+    marker.header.stamp = rclcpp::Time{0};
+    marker.ns = "rrt";
+    marker.id = 101;
+    marker.lifetime = rclcpp::Duration{0, 0};
+    marker.type = visualization_msgs::msg::Marker::LINE_LIST;
+    marker.action = visualization_msgs::msg::Marker::ADD;
+    marker.scale.x = 0.02;
+    marker.color.b = 1.0;
+    marker.color.a = 0.8;
+
+    tree.forEachNode([&marker, &tree](const rrt::Node &node) mutable {
+        if (!rrt::isRoot(node))
+        {
+            const auto &parent = tree.getNode(node.parentId);
+
+            geometry_msgs::msg::Point parentPoint{};
+            parentPoint.x = parent.state.position().x();
+            parentPoint.y = parent.state.position().y();
+            parentPoint.z = 0.0;
+            marker.points.push_back(parentPoint);
+
+            geometry_msgs::msg::Point childPoint{};
+            childPoint.x = node.state.position().x();
+            childPoint.y = node.state.position().y();
+            childPoint.z = 0.0;
+            marker.points.push_back(childPoint);
+        }
+    });
 
     m_markerPublisher->publish(marker);
 }

@@ -2,6 +2,7 @@
 
 #include <ugl/lie_group/pose.h>
 
+#include <functional>
 #include <vector>
 
 namespace pet::rrt
@@ -32,9 +33,13 @@ class Graph
     const Node &addNode(const ugl::lie::Pose &state,
                         const ControlInput &controlInput, const Node &parent);
 
+    const Node &getNode(int id) const;
+
     Node findClosest(const ugl::lie::Pose &targetPose) const;
 
     std::vector<Node> getPathFromRoot(const Node &node) const;
+
+    void forEachNode(const std::function<void(const Node &)> &function) const;
 
   private:
     const Node &storeNode(const Node &node);
@@ -42,5 +47,7 @@ class Graph
   private:
     std::vector<Node> m_nodes;
 };
+
+bool isRoot(const Node &node);
 
 } // namespace pet::rrt

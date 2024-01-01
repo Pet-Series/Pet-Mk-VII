@@ -5,12 +5,6 @@
 
 namespace pet::rrt
 {
-namespace
-{
-
-bool isRoot(const Node &node) { return node.parentId == -1; }
-
-} // namespace
 
 Graph::Graph(const ugl::lie::Pose &startingState)
 {
@@ -29,6 +23,8 @@ const Node &Graph::addNode(const ugl::lie::Pose &state,
     node.controlInput = controlInput;
     return storeNode(node);
 }
+
+const Node &Graph::getNode(int id) const { return m_nodes.at(id); }
 
 Node Graph::findClosest(const ugl::lie::Pose &targetPose) const
 {
@@ -71,5 +67,12 @@ const Node &Graph::storeNode(const Node &node)
     }
     return storedNode;
 }
+
+void Graph::forEachNode(const std::function<void(const Node &)> &function) const
+{
+    std::for_each(m_nodes.begin(), m_nodes.end(), function);
+}
+
+bool isRoot(const Node &node) { return node.parentId == -1; }
 
 } // namespace pet::rrt
