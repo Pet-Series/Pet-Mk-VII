@@ -23,9 +23,15 @@ target_link_libraries(rrt
 
 add_executable(rrt_simulation)
 
+target_include_directories(rrt_simulation
+  PRIVATE
+    ${PROJECT_SOURCE_DIR}/src/include/
+)
+
 target_sources(rrt_simulation
   PRIVATE
     ${PROJECT_SOURCE_DIR}/src/main.cpp
+    ${PROJECT_SOURCE_DIR}/src/visualization.cpp
 )
 
 target_link_libraries(rrt_simulation

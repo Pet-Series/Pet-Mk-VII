@@ -2,23 +2,20 @@
 #include "pet_mk_vii_planner/goal.hpp"
 #include "pet_mk_vii_planner/graph.hpp"
 #include "pet_mk_vii_planner/rrt.hpp"
+#include "visualization.hpp"
 
 #include <ugl/lie_group/pose.h>
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <geometry_msgs/msg/point.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 
-#include <chrono>
 #include <iostream>
 #include <optional>
 #include <vector>
 
 namespace pet
 {
-
-using namespace std::chrono_literals;
 
 class RrtSimulation : public rclcpp::Node
 {
@@ -30,12 +27,6 @@ class RrtSimulation : public rclcpp::Node
     }
 
     void runRrt();
-
-  private:
-    void visualizePath(const std::vector<rrt::Node> &path);
-    void visualizeSearchTree(const rrt::Graph &tree);
-
-    void resetVisualization();
 
   private:
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_markerPublisher;
@@ -74,85 +65,14 @@ void RrtSimulation::runRrt()
     std::cout << "...search done." << std::endl;
 
     std::cout << "Starting visualization..." << std::endl;
-    resetVisualization();
+    resetVisualization(m_markerPublisher);
     if (path.has_value())
     {
-        visualizePath(path.value());
+        visualizePath(path.value(), m_markerPublisher);
     }
     // visualizeMap(map);
-    visualizeSearchTree(searchTree);
+    visualizeSearchTree(searchTree, m_markerPublisher);
     std::cout << "...visualization done." << std::endl;
-}
-
-void RrtSimulation::visualizePath(const std::vector<rrt::Node> &path)
-{
-    visualization_msgs::msg::Marker marker{};
-
-    marker.header.frame_id = "map";
-    marker.header.stamp = rclcpp::Time{0};
-    marker.ns = "rrt";
-    marker.id = 1;
-    marker.lifetime = rclcpp::Duration{0, 0};
-    marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
-    marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.scale.x = 0.05;
-    marker.color.g = 1.0;
-    marker.color.a = 1.0;
-
-    for (const auto &node : path)
-    {
-        geometry_msgs::msg::Point point{};
-        point.x = node.state.position().x();
-        point.y = node.state.position().y();
-        point.z = 0.01;
-        marker.points.push_back(point);
-    }
-
-    m_markerPublisher->publish(marker);
-}
-
-void RrtSimulation::visualizeSearchTree(const rrt::Graph &tree)
-{
-    visualization_msgs::msg::Marker marker{};
-
-    marker.header.frame_id = "map";
-    marker.header.stamp = rclcpp::Time{0};
-    marker.ns = "rrt";
-    marker.id = 101;
-    marker.lifetime = rclcpp::Duration{0, 0};
-    marker.type = visualization_msgs::msg::Marker::LINE_LIST;
-    marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.scale.x = 0.02;
-    marker.color.b = 1.0;
-    marker.color.a = 0.8;
-
-    tree.forEachNode([&marker, &tree](const rrt::Node &node) mutable {
-        if (!rrt::isRoot(node))
-        {
-            const auto &parent = tree.getNode(node.parentId);
-
-            geometry_msgs::msg::Point parentPoint{};
-            parentPoint.x = parent.state.position().x();
-            parentPoint.y = parent.state.position().y();
-            parentPoint.z = 0.0;
-            marker.points.push_back(parentPoint);
-
-            geometry_msgs::msg::Point childPoint{};
-            childPoint.x = node.state.position().x();
-            childPoint.y = node.state.position().y();
-            childPoint.z = 0.0;
-            marker.points.push_back(childPoint);
-        }
-    });
-
-    m_markerPublisher->publish(marker);
-}
-
-void RrtSimulation::resetVisualization()
-{
-    visualization_msgs::msg::Marker marker{};
-    marker.action = visualization_msgs::msg::Marker::DELETEALL;
-    m_markerPublisher->publish(marker);
 }
 
 } // namespace pet
