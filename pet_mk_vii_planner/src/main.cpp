@@ -23,13 +23,18 @@ class RrtSimulation : public rclcpp::Node
     RrtSimulation() : Node("rrt_simulation")
     {
         m_markerPublisher =
-            this->create_publisher<visualization_msgs::msg::Marker>("rrt_found_path", 10);
+            this->create_publisher<visualization_msgs::msg::Marker>("rrt_marker", 10);
+        m_markerArrayPublisher =
+            this->create_publisher<visualization_msgs::msg::MarkerArray>(
+                "rrt_marker_array", 10);
     }
 
     void runRrt();
 
   private:
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_markerPublisher;
+    rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
+        m_markerArrayPublisher;
 };
 
 void RrtSimulation::runRrt()
@@ -65,13 +70,13 @@ void RrtSimulation::runRrt()
     std::cout << "...search done." << std::endl;
 
     std::cout << "Starting visualization..." << std::endl;
-    resetVisualization(m_markerPublisher);
+    resetVisualization(*m_markerPublisher);
     if (path.has_value())
     {
-        visualizePath(path.value(), m_markerPublisher);
+        visualizePath(path.value(), *m_markerPublisher, *m_markerArrayPublisher);
     }
     // visualizeMap(map);
-    visualizeSearchTree(searchTree, m_markerPublisher);
+    visualizeSearchTree(searchTree, *m_markerPublisher);
     std::cout << "...visualization done." << std::endl;
 }
 
