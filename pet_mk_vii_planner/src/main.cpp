@@ -89,7 +89,6 @@ int main(int argc, char *argv[])
     const auto rosNode = std::make_shared<pet::RrtSimulation>();
     rosNode->runRrt();
 
-    rclcpp::spin(rosNode);
     rclcpp::shutdown();
     return 0;
 }
