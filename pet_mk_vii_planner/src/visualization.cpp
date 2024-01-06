@@ -86,8 +86,9 @@ void visualizePath(
     markerArrayPub.publish(arrowArray);
 }
 
-void visualizeSearchTree(const rrt::Graph                                   &tree,
-                         rclcpp::Publisher<visualization_msgs::msg::Marker> &markerPub)
+void visualizeSearchTree(
+    const rrt::Graph &tree, rclcpp::Publisher<visualization_msgs::msg::Marker> &markerPub,
+    rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub)
 {
     visualization_msgs::msg::Marker marker{};
 
@@ -99,10 +100,12 @@ void visualizeSearchTree(const rrt::Graph                                   &tre
     marker.type = visualization_msgs::msg::Marker::LINE_LIST;
     marker.action = visualization_msgs::msg::Marker::ADD;
     marker.scale.x = 0.02;
+    marker.color.r = 0.3;
+    marker.color.g = 0.6;
     marker.color.b = 1.0;
-    marker.color.a = 0.8;
+    marker.color.a = 0.6;
 
-    tree.forEachNode([&marker, &tree](const rrt::Node &node) mutable {
+    tree.forEachNode([&](const rrt::Node &node) mutable {
         if (!rrt::isRoot(node))
         {
             const auto &parent = tree.getNode(node.parentId);
@@ -121,6 +124,30 @@ void visualizeSearchTree(const rrt::Graph                                   &tre
         }
     });
     markerPub.publish(marker);
+
+    visualization_msgs::msg::MarkerArray arrowArray{};
+    visualization_msgs::msg::Marker      arrow{};
+    arrow.header.frame_id = "map";
+    arrow.header.stamp = rclcpp::Time{0};
+    arrow.ns = "rrt";
+    arrow.id = 102;
+    arrow.lifetime = rclcpp::Duration{0, 0};
+    arrow.type = visualization_msgs::msg::Marker::ARROW;
+    arrow.action = visualization_msgs::msg::Marker::ADD;
+    arrow.scale.x = 0.2;
+    arrow.scale.y = 0.02;
+    arrow.scale.z = 0.02;
+    arrow.color.r = 0.3;
+    arrow.color.g = 0.6;
+    arrow.color.b = 1.0;
+    arrow.color.a = 0.6;
+    tree.forEachNode([&](const rrt::Node &node) mutable {
+        arrow.pose = toPoseMsg(node.state);
+        arrow.pose.position.z = 0.01;
+        ++arrow.id;
+        arrowArray.markers.push_back(arrow);
+    });
+    markerArrayPub.publish(arrowArray);
 }
 
 void resetVisualization(rclcpp::Publisher<visualization_msgs::msg::Marker> &markerPub)

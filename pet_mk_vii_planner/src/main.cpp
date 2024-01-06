@@ -76,7 +76,7 @@ void RrtSimulation::runRrt()
         visualizePath(path.value(), *m_markerPublisher, *m_markerArrayPublisher);
     }
     // visualizeMap(map);
-    visualizeSearchTree(searchTree, *m_markerPublisher);
+    visualizeSearchTree(searchTree, *m_markerPublisher, *m_markerArrayPublisher);
     std::cout << "...visualization done." << std::endl;
 }
 
