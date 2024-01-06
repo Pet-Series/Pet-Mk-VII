@@ -6,11 +6,14 @@ target_sources(rrt
     ${PROJECT_SOURCE_DIR}/src/graph.cpp
     ${PROJECT_SOURCE_DIR}/src/rrt.cpp
     ${PROJECT_SOURCE_DIR}/src/collision_map.cpp
+    ${PROJECT_SOURCE_DIR}/src/utility/algorithm.cpp
 )
 
 target_include_directories(rrt
   PUBLIC
     ${PROJECT_SOURCE_DIR}/include/
+  PRIVATE
+    ${PROJECT_SOURCE_DIR}/src/include/
 )
 
 target_link_libraries(rrt
