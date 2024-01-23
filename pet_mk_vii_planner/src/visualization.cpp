@@ -17,6 +17,12 @@ namespace pet
 namespace
 {
 
+int getUniqueId()
+{
+    static int id = 100'000;
+    return ++id;
+}
+
 std::vector<ugl::lie::Pose> interpolatePath(const ugl::lie::Pose &start,
                                             const ugl::lie::Pose &end, int numberOfPoints)
 {
@@ -67,7 +73,7 @@ void visualizePath(
     lineList.header.frame_id = "map";
     lineList.header.stamp = rclcpp::Time{0};
     lineList.ns = "rrt";
-    lineList.id = 1;
+    lineList.id = getUniqueId();
     lineList.lifetime = rclcpp::Duration{0, 0};
     lineList.type = visualization_msgs::msg::Marker::LINE_LIST;
     lineList.action = visualization_msgs::msg::Marker::ADD;
@@ -96,7 +102,7 @@ void visualizePath(
     arrow.header.frame_id = "map";
     arrow.header.stamp = rclcpp::Time{0};
     arrow.ns = "rrt";
-    arrow.id = 2;
+    arrow.id = getUniqueId();
     arrow.lifetime = rclcpp::Duration{0, 0};
     arrow.type = visualization_msgs::msg::Marker::ARROW;
     arrow.action = visualization_msgs::msg::Marker::ADD;
@@ -126,7 +132,7 @@ void visualizeSearchTree(
     lineList.header.frame_id = "map";
     lineList.header.stamp = rclcpp::Time{0};
     lineList.ns = "rrt";
-    lineList.id = 101;
+    lineList.id = getUniqueId();
     lineList.lifetime = rclcpp::Duration{0, 0};
     lineList.type = visualization_msgs::msg::Marker::LINE_LIST;
     lineList.action = visualization_msgs::msg::Marker::ADD;
@@ -156,7 +162,7 @@ void visualizeSearchTree(
     arrow.header.frame_id = "map";
     arrow.header.stamp = rclcpp::Time{0};
     arrow.ns = "rrt";
-    arrow.id = 102;
+    arrow.id = getUniqueId();
     arrow.lifetime = rclcpp::Duration{0, 0};
     arrow.type = visualization_msgs::msg::Marker::ARROW;
     arrow.action = visualization_msgs::msg::Marker::ADD;
