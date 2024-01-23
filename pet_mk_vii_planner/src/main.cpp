@@ -39,10 +39,11 @@ class RrtSimulation : public rclcpp::Node
 
 void RrtSimulation::runRrt()
 {
+    const rrt::VehicleModel     vehicleModel{};
     const rrt::VehicleFootprint footprint{{-0.02, 0.05}, {0.18, 0.05}};
     const rrt::BoundingBox      searchSpace{{-5.0, -5.0}, {5.0, 5.0}};
     const rrt::CollisionMap     map{};
-    const rrt::SearchContext    context{10, footprint, searchSpace, map};
+    const rrt::SearchContext    context{10, vehicleModel, footprint, searchSpace, map};
 
     const ugl::lie::Pose startPose = ugl::lie::Pose::Identity();
     const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};

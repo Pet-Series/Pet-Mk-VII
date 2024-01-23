@@ -19,8 +19,7 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
 
         const Node &parentNode = tree.findClosest(sampledState);
 
-        const auto result =
-            tryConnect(parentNode.state, sampledState, context.collisionMap);
+        const auto result = tryConnect(parentNode.state, sampledState, context);
         if (result.has_value())
         {
             const auto [controlInput, reachedState] = result.value();
@@ -66,15 +65,43 @@ bool shouldSampleFromGoal()
 
 std::optional<std::pair<ControlInput, ugl::lie::Pose>>
 tryConnect(const ugl::lie::Pose &start, const ugl::lie::Pose &desiredEnd,
-           const CollisionMap &map)
+           const SearchContext &context)
 {
     /// TODO: Perform collision check against map.
     const ugl::Vector<6> delta = ugl::lie::ominus(desiredEnd, start);
-    const double         controlDuration = 1.0;
-    ugl::Vector<6>       velocity = delta / controlDuration;
 
-    // Set lateral velocity to zero.
-    velocity[4] = 0.0;
+    double controlDuration = 1.0;
+    double forwardVel = delta[3] / controlDuration;
+    double yawrate = delta[2] / controlDuration;
+
+    // If speed is too low, we will not get anywhere so adding a new node is pointless.
+    if (std::abs(forwardVel) < 1e-3)
+    {
+        return {};
+    }
+
+    const double curvature = std::abs(yawrate / forwardVel);
+    if (curvature > context.vehicleModel.maxCurvature)
+    {
+        // Adjust forward velocity such that we get maximum curvature.
+        const double adjustment = curvature / context.vehicleModel.maxCurvature;
+        forwardVel *= adjustment;
+        controlDuration /= adjustment;
+    }
+
+    if (std::abs(forwardVel) > context.vehicleModel.maxSpeed)
+    {
+        // Adjust forward velocity such that we get maximum speed.
+        const double adjustment = context.vehicleModel.maxSpeed / std::abs(forwardVel);
+        forwardVel *= adjustment;
+        yawrate *= adjustment;
+        controlDuration /= adjustment;
+    }
+
+    ugl::Vector<6> velocity = ugl::Vector<6>::Zero();
+    velocity[2] = yawrate;
+    velocity[3] = forwardVel;
+
     const ugl::lie::Pose endState = ugl::lie::oplus(start, velocity);
 
     /// TODO: Verify control input against vehicle constraints.

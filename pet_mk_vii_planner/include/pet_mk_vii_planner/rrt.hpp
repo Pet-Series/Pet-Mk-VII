@@ -13,10 +13,19 @@
 namespace pet::rrt
 {
 
+struct VehicleModel
+{
+    // double maxSpeed = 0.5;
+    // double maxCurvature = 2.0;
+    double maxSpeed = 10.0;
+    double maxCurvature = 20.0;
+};
+
 struct SearchContext
 {
     int maxIterations;
 
+    VehicleModel     vehicleModel;
     VehicleFootprint vehicleFootprint;
     BoundingBox      searchSpace;
     CollisionMap     collisionMap;
@@ -31,6 +40,6 @@ bool shouldSampleFromGoal();
 
 std::optional<std::pair<ControlInput, ugl::lie::Pose>>
 tryConnect(const ugl::lie::Pose &start, const ugl::lie::Pose &desiredEnd,
-           const CollisionMap &map);
+           const SearchContext &context);
 
 } // namespace pet::rrt
