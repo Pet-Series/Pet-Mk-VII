@@ -11,8 +11,7 @@ namespace pet::rrt
 struct VehicleState
 {
     ugl::lie::Pose pose;
-    double         linearVelocity;
-    double         angularVelocity;
+    double         velocity;
 };
 
 struct PoseStamped
@@ -45,7 +44,7 @@ class Graph
 
     const Node &getNode(int id) const;
 
-    Node findClosest(const ugl::lie::Pose &targetPose) const;
+    Node findClosest(const VehicleState &targetState) const;
 
     std::vector<Node> getPathFromRoot(const Node &node) const;
 

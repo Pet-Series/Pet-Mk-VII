@@ -17,7 +17,8 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
 {
     for (int i = 0; i < context.maxIterations; ++i)
     {
-        const auto sampledState = sampleState(goal, context.searchSpace);
+        const auto sampledState =
+            sampleState(goal, context.vehicleModel, context.searchSpace);
 
         const Node &parentNode = tree.findClosest(sampledState);
 
@@ -30,7 +31,7 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
             const auto [reachedState, pathFromParent] = result.value();
             const Node &newNode = tree.addNode(reachedState, pathFromParent, parentNode);
             /// TODO: Consider velocity when determining if goal is reached.
-            if (goal.isReached(reachedState.pose))
+            if (goal.isReached(reachedState))
             {
                 return tree.getPathFromRoot(newNode);
             }
@@ -40,7 +41,8 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
     return {};
 }
 
-ugl::lie::Pose sampleState(const Goal &goal, const BoundingBox &searchSpace)
+VehicleState sampleState(const Goal &goal, const VehicleModel &vehicleModel,
+                         const BoundingBox &searchSpace)
 {
     if (shouldSampleFromGoal())
     {
@@ -55,10 +57,11 @@ ugl::lie::Pose sampleState(const Goal &goal, const BoundingBox &searchSpace)
         const ugl::UnitQuaternion quaternion{
             Eigen::AngleAxisd{heading, Eigen::Vector3d::UnitZ()}};
 
-        ugl::lie::Pose state{};
-        state.set_position({position.x(), position.y(), 0.0});
-        state.set_rotation(ugl::lie::Rotation{quaternion});
-
+        VehicleState state{};
+        state.pose.set_position({position.x(), position.y(), 0.0});
+        state.pose.set_rotation(ugl::lie::Rotation{quaternion});
+        state.velocity = ugl::random::UniformDistribution<1>::sample(
+            -vehicleModel.maxSpeed, vehicleModel.maxSpeed);
         return state;
     }
 }
@@ -69,11 +72,11 @@ bool shouldSampleFromGoal()
     return ugl::random::UniformDistribution<1>::sample(0.0, 1.0) < goalProbability;
 }
 
-std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState   &start,
-                                                       const ugl::lie::Pose &desiredEnd,
-                                                       const VehicleModel   &vehicleModel)
+std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState &start,
+                                                       const VehicleState &desiredEnd,
+                                                       const VehicleModel &vehicleModel)
 {
-    const ugl::Vector<6> delta = ugl::lie::ominus(desiredEnd, start.pose);
+    const ugl::Vector<6> delta = ugl::lie::ominus(desiredEnd.pose, start.pose);
 
     double controlDuration = 1.0;
     double forwardVel      = delta[3] / controlDuration;
@@ -108,9 +111,8 @@ std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState   &sta
     velocity[3]             = forwardVel;
 
     VehicleState endState;
-    endState.pose            = ugl::lie::oplus(start.pose, velocity);
-    endState.angularVelocity = velocity[2];
-    endState.linearVelocity  = velocity[3];
+    endState.pose     = ugl::lie::oplus(start.pose, velocity);
+    endState.velocity = velocity[3];
 
     /// TODO: Should start time always start from zero or be based on timestamp from
     /// previous path?

@@ -4,8 +4,6 @@
 #include "pet_mk_vii_planner/goal.hpp"
 #include "pet_mk_vii_planner/graph.hpp"
 
-#include <ugl/lie_group/pose.h>
-
 #include <optional>
 #include <utility>
 #include <vector>
@@ -22,7 +20,7 @@ struct VehicleModel
 };
 
 using SteerFunction = std::optional<std::pair<VehicleState, Path>> (*)(
-    const VehicleState &start, const ugl::lie::Pose &desiredEnd,
+    const VehicleState &start, const VehicleState &desiredEnd,
     const VehicleModel &vehicleModel);
 
 struct SearchContext
@@ -40,12 +38,13 @@ struct SearchContext
 std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
                                         const SearchContext &context);
 
-ugl::lie::Pose sampleState(const Goal &goal, const BoundingBox &searchSpace);
+VehicleState sampleState(const Goal &goal, const VehicleModel &vehicleModel,
+                         const BoundingBox &searchSpace);
 
 bool shouldSampleFromGoal();
 
-std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState   &start,
-                                                       const ugl::lie::Pose &desiredEnd,
+std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState &start,
+                                                       const VehicleState &desiredEnd,
                                                        const VehicleModel &vehicleModel);
 
 } // namespace pet::rrt

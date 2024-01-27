@@ -1,5 +1,7 @@
 #include "pet_mk_vii_planner/goal.hpp"
 
+#include <cmath>
+
 namespace pet::rrt
 {
 namespace
@@ -9,15 +11,20 @@ template <typename ScalarType> constexpr ScalarType square(ScalarType x) { retur
 
 } // namespace
 
-ugl::lie::Pose Goal::sampleState() const { return m_goalPose; }
-
-bool Goal::isReached(const ugl::lie::Pose &state) const
+VehicleState Goal::sampleState() const
 {
-    const auto posDiff   = m_goalPose.position() - state.position();
-    const auto angleDiff = m_goalPose.rotation().to_quaternion().angularDistance(
-        state.rotation().to_quaternion());
+    return VehicleState{m_targetPose, m_targetSpeed};
+}
+
+bool Goal::isReached(const VehicleState &state) const
+{
+    const auto posDiff   = m_targetPose.position() - state.pose.position();
+    const auto angleDiff = m_targetPose.rotation().to_quaternion().angularDistance(
+        state.pose.rotation().to_quaternion());
+    const auto speedDiff = m_targetSpeed - state.velocity;
     return posDiff.squaredNorm() < square(m_positionTolerance) &&
-           angleDiff < m_headingTolerance;
+           std::abs(angleDiff) < m_headingTolerance &&
+           std::abs(speedDiff) < m_speedTolerance;
 }
 
 } // namespace pet::rrt

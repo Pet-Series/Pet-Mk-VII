@@ -27,7 +27,7 @@ const Node &Graph::addNode(const VehicleState &state, const Path &pathFromParent
 
 const Node &Graph::getNode(int id) const { return m_nodes.at(id); }
 
-Node Graph::findClosest(const ugl::lie::Pose &targetPose) const
+Node Graph::findClosest(const VehicleState &targetState) const
 {
     /// TODO: Create overload of findClosest that takes a binary distance function.
     /// TODO: Implement some sort of tree- and/or bucket- system to improve performance.
@@ -36,7 +36,7 @@ Node Graph::findClosest(const ugl::lie::Pose &targetPose) const
     for (const auto &node : m_nodes)
     {
         const double distance =
-            ugl::lie::ominus(node.state.pose, targetPose).squaredNorm();
+            ugl::lie::ominus(node.state.pose, targetState.pose).squaredNorm();
         if (distance < minDistance)
         {
             minDistance = distance;

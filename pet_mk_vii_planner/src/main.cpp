@@ -50,7 +50,7 @@ void RrtSimulation::runRrt()
         return context;
     }();
 
-    const rrt::VehicleState startState{ugl::lie::Pose::Identity(), 0.0, 0.0};
+    const rrt::VehicleState startState{ugl::lie::Pose::Identity(), 0.0};
     const ugl::lie::Pose    goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};
 
     rrt::Graph      searchTree{startState};
