@@ -17,11 +17,12 @@ std::vector<rrt::PoseStamped> interpolatePath(const rrt::PoseStamped &start,
 {
     assert(numberOfPoints > 1);
     std::vector<rrt::PoseStamped> path{};
-    const double                ratioDelta = 1.0 / (numberOfPoints - 1);
-    double                      ratio = 0.0;
+
+    const double ratioDelta = 1.0 / (numberOfPoints - 1);
+    double       ratio      = 0.0;
     for (int i = 0; i < numberOfPoints; ++i)
     {
-        const auto pose = ugl::lie::interpolate(start.pose, end.pose, ratio);
+        const auto pose      = ugl::lie::interpolate(start.pose, end.pose, ratio);
         const auto timestamp = interpolate(start.timestamp, end.timestamp, ratio);
         path.push_back(rrt::PoseStamped{pose, timestamp});
         ratio += ratioDelta;

@@ -40,10 +40,10 @@ geometry_msgs::msg::Pose toPoseMsg(const ugl::lie::Pose &pose)
     msg.position.z = pose.position().z();
 
     const auto quaternion = pose.rotation().to_quaternion();
-    msg.orientation.x = quaternion.x();
-    msg.orientation.y = quaternion.y();
-    msg.orientation.z = quaternion.z();
-    msg.orientation.w = quaternion.w();
+    msg.orientation.x     = quaternion.x();
+    msg.orientation.y     = quaternion.y();
+    msg.orientation.z     = quaternion.z();
+    msg.orientation.w     = quaternion.w();
 
     return msg;
 }
@@ -57,18 +57,18 @@ void visualizePath(
 {
     visualization_msgs::msg::Marker lineList{};
     lineList.header.frame_id = "map";
-    lineList.header.stamp = rclcpp::Time{0};
-    lineList.ns = "rrt";
-    lineList.id = getUniqueId();
-    lineList.lifetime = rclcpp::Duration{0, 0};
-    lineList.type = visualization_msgs::msg::Marker::LINE_LIST;
-    lineList.action = visualization_msgs::msg::Marker::ADD;
+    lineList.header.stamp    = rclcpp::Time{0};
+    lineList.ns              = "rrt";
+    lineList.id              = getUniqueId();
+    lineList.lifetime        = rclcpp::Duration{0, 0};
+    lineList.type            = visualization_msgs::msg::Marker::LINE_LIST;
+    lineList.action          = visualization_msgs::msg::Marker::ADD;
     lineList.pose.position.z = 0.01; // Use height to "overlay" in the visualization.
-    lineList.scale.x = 0.05;
-    lineList.color.r = 0.1;
-    lineList.color.g = 0.8;
-    lineList.color.b = 0.1;
-    lineList.color.a = 0.8;
+    lineList.scale.x         = 0.05;
+    lineList.color.r         = 0.1;
+    lineList.color.g         = 0.8;
+    lineList.color.b         = 0.1;
+    lineList.color.a         = 0.8;
 
     std::for_each(path.cbegin(), path.cend(), [&](const rrt::Node &node) {
         if (!rrt::isRoot(node))
@@ -87,22 +87,22 @@ void visualizePath(
     visualization_msgs::msg::MarkerArray arrowArray{};
     visualization_msgs::msg::Marker      arrow{};
     arrow.header.frame_id = "map";
-    arrow.header.stamp = rclcpp::Time{0};
-    arrow.ns = "rrt";
-    arrow.id = getUniqueId();
-    arrow.lifetime = rclcpp::Duration{0, 0};
-    arrow.type = visualization_msgs::msg::Marker::ARROW;
-    arrow.action = visualization_msgs::msg::Marker::ADD;
-    arrow.scale.x = 0.2;
-    arrow.scale.y = 0.02;
-    arrow.scale.z = 0.02;
-    arrow.color.r = 0.1;
-    arrow.color.g = 0.9;
-    arrow.color.b = 0.1;
-    arrow.color.a = 1.0;
+    arrow.header.stamp    = rclcpp::Time{0};
+    arrow.ns              = "rrt";
+    arrow.id              = getUniqueId();
+    arrow.lifetime        = rclcpp::Duration{0, 0};
+    arrow.type            = visualization_msgs::msg::Marker::ARROW;
+    arrow.action          = visualization_msgs::msg::Marker::ADD;
+    arrow.scale.x         = 0.2;
+    arrow.scale.y         = 0.02;
+    arrow.scale.z         = 0.02;
+    arrow.color.r         = 0.1;
+    arrow.color.g         = 0.9;
+    arrow.color.b         = 0.1;
+    arrow.color.a         = 1.0;
     for (const auto &node : path)
     {
-        arrow.pose = toPoseMsg(node.state.pose);
+        arrow.pose            = toPoseMsg(node.state.pose);
         arrow.pose.position.z = 0.02;
         ++arrow.id;
         arrowArray.markers.push_back(arrow);
@@ -117,17 +117,17 @@ void visualizeSearchTree(
     visualization_msgs::msg::Marker lineList{};
 
     lineList.header.frame_id = "map";
-    lineList.header.stamp = rclcpp::Time{0};
-    lineList.ns = "rrt";
-    lineList.id = getUniqueId();
-    lineList.lifetime = rclcpp::Duration{0, 0};
-    lineList.type = visualization_msgs::msg::Marker::LINE_LIST;
-    lineList.action = visualization_msgs::msg::Marker::ADD;
-    lineList.scale.x = 0.02;
-    lineList.color.r = 0.3;
-    lineList.color.g = 0.6;
-    lineList.color.b = 1.0;
-    lineList.color.a = 0.6;
+    lineList.header.stamp    = rclcpp::Time{0};
+    lineList.ns              = "rrt";
+    lineList.id              = getUniqueId();
+    lineList.lifetime        = rclcpp::Duration{0, 0};
+    lineList.type            = visualization_msgs::msg::Marker::LINE_LIST;
+    lineList.action          = visualization_msgs::msg::Marker::ADD;
+    lineList.scale.x         = 0.02;
+    lineList.color.r         = 0.3;
+    lineList.color.g         = 0.6;
+    lineList.color.b         = 1.0;
+    lineList.color.a         = 0.6;
 
     tree.forEachNode([&](const rrt::Node &node) {
         if (!rrt::isRoot(node))
@@ -146,21 +146,21 @@ void visualizeSearchTree(
     visualization_msgs::msg::MarkerArray arrowArray{};
     visualization_msgs::msg::Marker      arrow{};
     arrow.header.frame_id = "map";
-    arrow.header.stamp = rclcpp::Time{0};
-    arrow.ns = "rrt";
-    arrow.id = getUniqueId();
-    arrow.lifetime = rclcpp::Duration{0, 0};
-    arrow.type = visualization_msgs::msg::Marker::ARROW;
-    arrow.action = visualization_msgs::msg::Marker::ADD;
-    arrow.scale.x = 0.2;
-    arrow.scale.y = 0.02;
-    arrow.scale.z = 0.02;
-    arrow.color.r = 0.3;
-    arrow.color.g = 0.6;
-    arrow.color.b = 1.0;
-    arrow.color.a = 0.6;
+    arrow.header.stamp    = rclcpp::Time{0};
+    arrow.ns              = "rrt";
+    arrow.id              = getUniqueId();
+    arrow.lifetime        = rclcpp::Duration{0, 0};
+    arrow.type            = visualization_msgs::msg::Marker::ARROW;
+    arrow.action          = visualization_msgs::msg::Marker::ADD;
+    arrow.scale.x         = 0.2;
+    arrow.scale.y         = 0.02;
+    arrow.scale.z         = 0.02;
+    arrow.color.r         = 0.3;
+    arrow.color.g         = 0.6;
+    arrow.color.b         = 1.0;
+    arrow.color.a         = 0.6;
     tree.forEachNode([&](const rrt::Node &node) {
-        arrow.pose = toPoseMsg(node.state.pose);
+        arrow.pose            = toPoseMsg(node.state.pose);
         arrow.pose.position.z = 0.01;
         ++arrow.id;
         arrowArray.markers.push_back(arrow);

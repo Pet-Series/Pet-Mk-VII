@@ -13,7 +13,7 @@ ugl::lie::Pose Goal::sampleState() const { return m_goalPose; }
 
 bool Goal::isReached(const ugl::lie::Pose &state) const
 {
-    const auto posDiff = m_goalPose.position() - state.position();
+    const auto posDiff   = m_goalPose.position() - state.position();
     const auto angleDiff = m_goalPose.rotation().to_quaternion().angularDistance(
         state.rotation().to_quaternion());
     return posDiff.squaredNorm() < square(m_positionTolerance) &&

@@ -7,7 +7,8 @@ AccessModifierOffset: -2
 
 ColumnLimit: 90
 
-AlignConsecutiveDeclarations: Consecutive 
+AlignConsecutiveDeclarations: Consecutive
+AlignConsecutiveAssignments: Consecutive
 
 BreakBeforeBraces: Custom
 BraceWrapping:

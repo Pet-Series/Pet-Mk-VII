@@ -18,7 +18,7 @@ class Goal
     ugl::lie::Pose m_goalPose;
 
     static constexpr double m_positionTolerance = 0.1;
-    static constexpr double m_headingTolerance = 0.5;
+    static constexpr double m_headingTolerance  = 0.5;
 };
 
 } // namespace pet::rrt

@@ -25,8 +25,8 @@ using Path = std::vector<PoseStamped>;
 
 struct Node
 {
-    int id;
-    int parentId;
+    int              id;
+    int              parentId;
     std::vector<int> childrenIds;
 
     VehicleState state;

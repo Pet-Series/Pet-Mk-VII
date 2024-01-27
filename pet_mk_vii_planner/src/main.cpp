@@ -41,11 +41,11 @@ void RrtSimulation::runRrt()
 {
     const rrt::SearchContext context = [] {
         rrt::SearchContext context{};
-        context.maxIterations = 10;
-        context.vehicleModel = rrt::VehicleModel{};
+        context.maxIterations    = 10;
+        context.vehicleModel     = rrt::VehicleModel{};
         context.vehicleFootprint = rrt::VehicleFootprint{{-0.02, 0.05}, {0.18, 0.05}};
-        context.searchSpace = rrt::BoundingBox{{-5.0, -5.0}, {5.0, 5.0}};
-        context.collisionMap = rrt::CollisionMap{};
+        context.searchSpace      = rrt::BoundingBox{{-5.0, -5.0}, {5.0, 5.0}};
+        context.collisionMap     = rrt::CollisionMap{};
         return context;
     }();
 
@@ -55,7 +55,7 @@ void RrtSimulation::runRrt()
     rrt::Graph      searchTree{startState};
     const rrt::Goal goal{goalPose};
 
-    std::vector<rrt::Graph> searchHistory{};
+    std::vector<rrt::Graph>               searchHistory{};
     std::optional<std::vector<rrt::Node>> path{};
 
     std::cout << "Starting search..." << std::endl;

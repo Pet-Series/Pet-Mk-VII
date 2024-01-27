@@ -9,8 +9,8 @@ namespace pet::rrt
 Graph::Graph(const VehicleState &startingState)
 {
     Node rootNode{};
-    rootNode.parentId = -1;
-    rootNode.state = startingState;
+    rootNode.parentId       = -1;
+    rootNode.state          = startingState;
     rootNode.pathFromParent = {};
     storeNode(rootNode);
 }
@@ -19,8 +19,8 @@ const Node &Graph::addNode(const VehicleState &state, const Path &pathFromParent
                            const Node &parent)
 {
     Node node{};
-    node.parentId = parent.id;
-    node.state = state;
+    node.parentId       = parent.id;
+    node.state          = state;
     node.pathFromParent = pathFromParent;
     return storeNode(node);
 }
@@ -63,7 +63,7 @@ const Node &Graph::storeNode(const Node &node)
 {
     m_nodes.push_back(node);
     Node &storedNode = m_nodes.back();
-    storedNode.id = m_nodes.size() - 1;
+    storedNode.id    = m_nodes.size() - 1;
     if (!isRoot(storedNode))
     {
         m_nodes[storedNode.parentId].childrenIds.push_back(storedNode.id);

@@ -17,8 +17,7 @@ using VehicleFootprint = BoundingBox;
 class CollisionMap
 {
   public:
-    bool isInCollision(const ugl::lie::Pose   &pose,
-                       const VehicleFootprint &footprint);
+    bool isInCollision(const ugl::lie::Pose &pose, const VehicleFootprint &footprint);
 };
 
 } // namespace pet::rrt
