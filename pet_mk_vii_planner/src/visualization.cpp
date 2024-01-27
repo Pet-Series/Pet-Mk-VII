@@ -2,6 +2,7 @@
 
 #include "pet_mk_vii_planner/graph.hpp"
 #include "utility/algorithm.hpp"
+#include "utility/interpolation.hpp"
 
 #include <ugl/lie_group/pose.h>
 
@@ -21,20 +22,6 @@ int getUniqueId()
 {
     static int id = 100'000;
     return ++id;
-}
-
-std::vector<ugl::lie::Pose> interpolatePath(const ugl::lie::Pose &start,
-                                            const ugl::lie::Pose &end, int numberOfPoints)
-{
-    std::vector<ugl::lie::Pose> path{};
-    const double                ratioDelta = 1.0 / (numberOfPoints - 1);
-    double                      ratio = 0.0;
-    for (int i = 0; i < numberOfPoints; ++i)
-    {
-        path.push_back(ugl::lie::interpolate(start, end, ratio));
-        ratio += ratioDelta;
-    }
-    return path;
 }
 
 geometry_msgs::msg::Point toPointMsg(const ugl::Vector3 &point)
@@ -87,7 +74,7 @@ void visualizePath(
     util::adjacent_for_each(
         path.cbegin(), path.cend(),
         [&lineList](const rrt::Node &parent, const rrt::Node &child) {
-            const auto path = interpolatePath(parent.state, child.state, 5);
+            const auto path = util::interpolatePath(parent.state, child.state, 5);
             util::adjacent_for_each(
                 path.cbegin(), path.cend(),
                 [&lineList](const auto &start, const auto &end) {
@@ -146,7 +133,7 @@ void visualizeSearchTree(
         if (!rrt::isRoot(node))
         {
             const auto &parent = tree.getNode(node.parentId);
-            const auto  path = interpolatePath(parent.state, node.state, 5);
+            const auto  path = util::interpolatePath(parent.state, node.state, 5);
             util::adjacent_for_each(
                 path.cbegin(), path.cend(),
                 [&lineList](const auto &start, const auto &end) {
