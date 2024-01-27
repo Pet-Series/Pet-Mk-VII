@@ -21,9 +21,10 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
 
         const Node &parentNode = tree.findClosest(sampledState);
 
-        /// TODO: Refactor to enable dependency injection of 'tryConnect()'-function.
-        /// TODO: Implement 'tryConnect()' using Bezier curves.
-        const auto result = tryConnect(parentNode.state, sampledState, context);
+        /// TODO: Perform collision check against map.
+        /// TODO: Implement steering function using Bezier curves.
+        const auto result =
+            context.steerFunction(parentNode.state, sampledState, context.vehicleModel);
         if (result.has_value())
         {
             const auto [reachedState, pathFromParent] = result.value();
@@ -68,11 +69,10 @@ bool shouldSampleFromGoal()
     return ugl::random::UniformDistribution<1>::sample(0.0, 1.0) < goalProbability;
 }
 
-std::optional<std::pair<VehicleState, Path>> tryConnect(const VehicleState   &start,
-                                                        const ugl::lie::Pose &desiredEnd,
-                                                        const SearchContext  &context)
+std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState   &start,
+                                                       const ugl::lie::Pose &desiredEnd,
+                                                       const VehicleModel   &vehicleModel)
 {
-    /// TODO: Perform collision check against map.
     const ugl::Vector<6> delta = ugl::lie::ominus(desiredEnd, start.pose);
 
     double controlDuration = 1.0;
@@ -86,18 +86,18 @@ std::optional<std::pair<VehicleState, Path>> tryConnect(const VehicleState   &st
     }
 
     const double curvature = std::abs(yawrate / forwardVel);
-    if (curvature > context.vehicleModel.maxCurvature)
+    if (curvature > vehicleModel.maxCurvature)
     {
         // Adjust forward velocity such that we get maximum curvature.
-        const double adjustment = curvature / context.vehicleModel.maxCurvature;
+        const double adjustment = curvature / vehicleModel.maxCurvature;
         forwardVel *= adjustment;
         controlDuration /= adjustment;
     }
 
-    if (std::abs(forwardVel) > context.vehicleModel.maxSpeed)
+    if (std::abs(forwardVel) > vehicleModel.maxSpeed)
     {
         // Adjust forward velocity such that we get maximum speed.
-        const double adjustment = context.vehicleModel.maxSpeed / std::abs(forwardVel);
+        const double adjustment = vehicleModel.maxSpeed / std::abs(forwardVel);
         forwardVel *= adjustment;
         yawrate *= adjustment;
         controlDuration /= adjustment;

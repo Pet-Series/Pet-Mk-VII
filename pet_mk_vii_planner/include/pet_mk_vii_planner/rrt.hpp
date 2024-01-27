@@ -21,6 +21,10 @@ struct VehicleModel
     double maxCurvature = 20.0;
 };
 
+using SteerFunction = std::optional<std::pair<VehicleState, Path>> (*)(
+    const VehicleState &start, const ugl::lie::Pose &desiredEnd,
+    const VehicleModel &vehicleModel);
+
 struct SearchContext
 {
     int maxIterations;
@@ -29,6 +33,8 @@ struct SearchContext
     VehicleFootprint vehicleFootprint;
     BoundingBox      searchSpace;
     CollisionMap     collisionMap;
+
+    SteerFunction steerFunction;
 };
 
 std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
@@ -38,8 +44,8 @@ ugl::lie::Pose sampleState(const Goal &goal, const BoundingBox &searchSpace);
 
 bool shouldSampleFromGoal();
 
-std::optional<std::pair<VehicleState, Path>> tryConnect(const VehicleState   &start,
-                                                        const ugl::lie::Pose &desiredEnd,
-                                                        const SearchContext  &context);
+std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState   &start,
+                                                       const ugl::lie::Pose &desiredEnd,
+                                                       const VehicleModel &vehicleModel);
 
 } // namespace pet::rrt
