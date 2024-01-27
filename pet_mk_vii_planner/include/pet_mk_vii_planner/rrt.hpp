@@ -38,8 +38,8 @@ ugl::lie::Pose sampleState(const Goal &goal, const BoundingBox &searchSpace);
 
 bool shouldSampleFromGoal();
 
-std::optional<std::pair<ControlInput, ugl::lie::Pose>>
-tryConnect(const ugl::lie::Pose &start, const ugl::lie::Pose &desiredEnd,
-           const SearchContext &context);
+std::optional<std::pair<VehicleState, Path>> tryConnect(const VehicleState   &start,
+                                                        const ugl::lie::Pose &desiredEnd,
+                                                        const SearchContext  &context);
 
 } // namespace pet::rrt

@@ -45,10 +45,10 @@ void RrtSimulation::runRrt()
     const rrt::CollisionMap     map{};
     const rrt::SearchContext    context{10, vehicleModel, footprint, searchSpace, map};
 
-    const ugl::lie::Pose startPose = ugl::lie::Pose::Identity();
-    const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};
+    const rrt::VehicleState startState{ugl::lie::Pose::Identity(), 0.0, 0.0};
+    const ugl::lie::Pose    goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};
 
-    rrt::Graph      searchTree{startPose};
+    rrt::Graph      searchTree{startState};
     const rrt::Goal goal{goalPose};
 
     std::vector<rrt::Graph> searchHistory{};

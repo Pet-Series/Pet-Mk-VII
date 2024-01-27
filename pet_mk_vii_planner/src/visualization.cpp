@@ -2,7 +2,6 @@
 
 #include "pet_mk_vii_planner/graph.hpp"
 #include "utility/algorithm.hpp"
-#include "utility/interpolation.hpp"
 
 #include <ugl/lie_group/pose.h>
 
@@ -71,17 +70,18 @@ void visualizePath(
     lineList.color.b = 0.1;
     lineList.color.a = 0.8;
 
-    util::adjacent_for_each(
-        path.cbegin(), path.cend(),
-        [&lineList](const rrt::Node &parent, const rrt::Node &child) {
-            const auto path = util::interpolatePath(parent.state, child.state, 5);
+    std::for_each(path.cbegin(), path.cend(), [&](const rrt::Node &node) {
+        if (!rrt::isRoot(node))
+        {
+            const auto &path = node.pathFromParent;
             util::adjacent_for_each(
                 path.cbegin(), path.cend(),
                 [&lineList](const auto &start, const auto &end) {
-                    lineList.points.push_back(toPointMsg(start.position()));
-                    lineList.points.push_back(toPointMsg(end.position()));
+                    lineList.points.push_back(toPointMsg(start.pose.position()));
+                    lineList.points.push_back(toPointMsg(end.pose.position()));
                 });
-        });
+        }
+    });
     markerPub.publish(lineList);
 
     visualization_msgs::msg::MarkerArray arrowArray{};
@@ -102,7 +102,7 @@ void visualizePath(
     arrow.color.a = 1.0;
     for (const auto &node : path)
     {
-        arrow.pose = toPoseMsg(node.state);
+        arrow.pose = toPoseMsg(node.state.pose);
         arrow.pose.position.z = 0.02;
         ++arrow.id;
         arrowArray.markers.push_back(arrow);
@@ -129,16 +129,15 @@ void visualizeSearchTree(
     lineList.color.b = 1.0;
     lineList.color.a = 0.6;
 
-    tree.forEachNode([&](const rrt::Node &node) mutable {
+    tree.forEachNode([&](const rrt::Node &node) {
         if (!rrt::isRoot(node))
         {
-            const auto &parent = tree.getNode(node.parentId);
-            const auto  path = util::interpolatePath(parent.state, node.state, 5);
+            const auto &path = node.pathFromParent;
             util::adjacent_for_each(
                 path.cbegin(), path.cend(),
                 [&lineList](const auto &start, const auto &end) {
-                    lineList.points.push_back(toPointMsg(start.position()));
-                    lineList.points.push_back(toPointMsg(end.position()));
+                    lineList.points.push_back(toPointMsg(start.pose.position()));
+                    lineList.points.push_back(toPointMsg(end.pose.position()));
                 });
         }
     });
@@ -160,8 +159,8 @@ void visualizeSearchTree(
     arrow.color.g = 0.6;
     arrow.color.b = 1.0;
     arrow.color.a = 0.6;
-    tree.forEachNode([&](const rrt::Node &node) mutable {
-        arrow.pose = toPoseMsg(node.state);
+    tree.forEachNode([&](const rrt::Node &node) {
+        arrow.pose = toPoseMsg(node.state.pose);
         arrow.pose.position.z = 0.01;
         ++arrow.id;
         arrowArray.markers.push_back(arrow);

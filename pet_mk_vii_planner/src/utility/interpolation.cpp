@@ -2,6 +2,8 @@
 
 #include <ugl/lie_group/pose.h>
 
+#include <cassert>
+#include <cmath>
 #include <vector>
 
 namespace pet
@@ -9,15 +11,19 @@ namespace pet
 namespace util
 {
 
-std::vector<ugl::lie::Pose> interpolatePath(const ugl::lie::Pose &start,
-                                            const ugl::lie::Pose &end, int numberOfPoints)
+std::vector<rrt::PoseStamped> interpolatePath(const rrt::PoseStamped &start,
+                                              const rrt::PoseStamped &end,
+                                              int                     numberOfPoints)
 {
-    std::vector<ugl::lie::Pose> path{};
+    assert(numberOfPoints > 1);
+    std::vector<rrt::PoseStamped> path{};
     const double                ratioDelta = 1.0 / (numberOfPoints - 1);
     double                      ratio = 0.0;
     for (int i = 0; i < numberOfPoints; ++i)
     {
-        path.push_back(ugl::lie::interpolate(start, end, ratio));
+        const auto pose = ugl::lie::interpolate(start.pose, end.pose, ratio);
+        const auto timestamp = interpolate(start.timestamp, end.timestamp, ratio);
+        path.push_back(rrt::PoseStamped{pose, timestamp});
         ratio += ratioDelta;
     }
     return path;

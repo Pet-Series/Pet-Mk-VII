@@ -6,21 +6,22 @@
 namespace pet::rrt
 {
 
-Graph::Graph(const ugl::lie::Pose &startingState)
+Graph::Graph(const VehicleState &startingState)
 {
     Node rootNode{};
     rootNode.parentId = -1;
     rootNode.state = startingState;
+    rootNode.pathFromParent = {};
     storeNode(rootNode);
 }
 
-const Node &Graph::addNode(const ugl::lie::Pose &state,
-                           const ControlInput &controlInput, const Node &parent)
+const Node &Graph::addNode(const VehicleState &state, const Path &pathFromParent,
+                           const Node &parent)
 {
     Node node{};
     node.parentId = parent.id;
     node.state = state;
-    node.controlInput = controlInput;
+    node.pathFromParent = pathFromParent;
     return storeNode(node);
 }
 
@@ -28,12 +29,14 @@ const Node &Graph::getNode(int id) const { return m_nodes.at(id); }
 
 Node Graph::findClosest(const ugl::lie::Pose &targetPose) const
 {
+    /// TODO: Create overload of findClosest that takes a binary distance function.
     /// TODO: Implement some sort of tree- and/or bucket- system to improve performance.
     Node   nearestNode = m_nodes.back();
     double minDistance = std::numeric_limits<double>::infinity();
     for (const auto &node : m_nodes)
     {
-        const double distance = ugl::lie::ominus(node.state, targetPose).squaredNorm();
+        const double distance =
+            ugl::lie::ominus(node.state.pose, targetPose).squaredNorm();
         if (distance < minDistance)
         {
             minDistance = distance;

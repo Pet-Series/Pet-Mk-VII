@@ -8,12 +8,20 @@
 namespace pet::rrt
 {
 
-struct ControlInput
+struct VehicleState
 {
-    double duration;
-    double linearVelocity;
-    double angularVelocity;
+    ugl::lie::Pose pose;
+    double         linearVelocity;
+    double         angularVelocity;
 };
+
+struct PoseStamped
+{
+    ugl::lie::Pose pose;
+    double         timestamp;
+};
+
+using Path = std::vector<PoseStamped>;
 
 struct Node
 {
@@ -21,17 +29,19 @@ struct Node
     int parentId;
     std::vector<int> childrenIds;
 
-    ugl::lie::Pose state;
-    ControlInput   controlInput;
+    VehicleState state;
+    Path         pathFromParent;
 };
+
+/// TODO: Define struct 'Payload' and make Graph only interact with that?
 
 class Graph
 {
   public:
-    Graph(const ugl::lie::Pose &startingState);
+    Graph(const VehicleState &startingState);
 
-    const Node &addNode(const ugl::lie::Pose &state,
-                        const ControlInput &controlInput, const Node &parent);
+    const Node &addNode(const VehicleState &state, const Path &pathFromParent,
+                        const Node &parent);
 
     const Node &getNode(int id) const;
 
