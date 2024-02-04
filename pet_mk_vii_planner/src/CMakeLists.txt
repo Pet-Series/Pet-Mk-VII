@@ -2,10 +2,11 @@ add_library(rrt)
 
 target_sources(rrt
   PRIVATE
+    ${PROJECT_SOURCE_DIR}/src/bezier.cpp
+    ${PROJECT_SOURCE_DIR}/src/collision_map.cpp
     ${PROJECT_SOURCE_DIR}/src/goal.cpp
     ${PROJECT_SOURCE_DIR}/src/graph.cpp
     ${PROJECT_SOURCE_DIR}/src/rrt.cpp
-    ${PROJECT_SOURCE_DIR}/src/collision_map.cpp
     ${PROJECT_SOURCE_DIR}/src/utility/algorithm.cpp
     ${PROJECT_SOURCE_DIR}/src/utility/interpolation.cpp
 )
