@@ -111,17 +111,20 @@ template <> inline ugl::Vector3 Bezier<1>::acceleration(double /*t*/) const
     return ugl::Vector3::Zero();
 }
 
+using CubicBezier  = Bezier<3>;
+using PenticBezier = Bezier<5>;
+
 /// @brief Build a Bézier curve from a duration and position and velocity at
 /// start and end.
-Bezier<3> buildCubicBezier(double duration, const ugl::Vector3 &pos0,
-                           const ugl::Vector3 &vel0, const ugl::Vector3 &pos1,
-                           const ugl::Vector3 &vel1);
+CubicBezier buildCubicBezier(double duration, const ugl::Vector3 &pos0,
+                             const ugl::Vector3 &vel0, const ugl::Vector3 &pos1,
+                             const ugl::Vector3 &vel1);
 
 /// @brief Build a Bézier curve from a duration and position, velocity and acceleration at
 /// start and end.
-Bezier<5> buildPenticBezier(double duration, const ugl::Vector3 &pos0,
-                            const ugl::Vector3 &vel0, const ugl::Vector3 &acc0,
-                            const ugl::Vector3 &pos1, const ugl::Vector3 &vel1,
-                            const ugl::Vector3 &acc1);
+PenticBezier buildPenticBezier(double duration, const ugl::Vector3 &pos0,
+                               const ugl::Vector3 &vel0, const ugl::Vector3 &acc0,
+                               const ugl::Vector3 &pos1, const ugl::Vector3 &vel1,
+                               const ugl::Vector3 &acc1);
 
 } // namespace pet::rrt
