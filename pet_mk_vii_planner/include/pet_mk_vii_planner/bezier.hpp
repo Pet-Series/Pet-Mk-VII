@@ -29,18 +29,15 @@ template <int degree> class Bezier
         assert(duration > 0); // Duration must be positive.
     }
 
-    double      duration() const override { return m_duration; }
+    double      duration() const { return m_duration; }
     const auto &points() const { return m_points; }
 
-    ugl::Vector3 start() const override { return m_points.front(); }
-    ugl::Vector3 end() const override { return m_points.back(); }
+    ugl::Vector3 start() const { return m_points.front(); }
+    ugl::Vector3 end() const { return m_points.back(); }
 
-    ugl::Vector3 position(double t) const override { return evaluate(t); }
-    ugl::Vector3 velocity(double t) const override { return getDerivative().position(t); }
-    ugl::Vector3 acceleration(double t) const override
-    {
-        return getDerivative().velocity(t);
-    }
+    ugl::Vector3 position(double t) const { return evaluate(t); }
+    ugl::Vector3 velocity(double t) const { return getDerivative().position(t); }
+    ugl::Vector3 acceleration(double t) const { return getDerivative().velocity(t); }
 
     Bezier<degree - 1> getDerivative() const
     {
