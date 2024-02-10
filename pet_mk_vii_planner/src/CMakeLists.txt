@@ -24,6 +24,8 @@ target_link_libraries(rrt
     ugl::lie_group
   PRIVATE
     ugl::random
+    project_options
+    project_warnings
 )
 
 add_executable(rrt_simulation)
@@ -41,6 +43,8 @@ target_sources(rrt_simulation
 
 target_link_libraries(rrt_simulation
     rrt
+    project_options
+    project_warnings
 )
 
 ament_target_dependencies(rrt_simulation 
