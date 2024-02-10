@@ -85,12 +85,12 @@ void RrtSimulation::runRrt()
 
     std::cout << "Starting visualization..." << std::endl;
     resetVisualization(*m_markerPublisher, *m_markerArrayPublisher);
+    // visualizeMap(map);
+    visualizeSearchTree(searchTree, *m_markerPublisher, *m_markerArrayPublisher);
     if (path.has_value())
     {
         visualizePath(path.value(), *m_markerPublisher, *m_markerArrayPublisher);
     }
-    // visualizeMap(map);
-    visualizeSearchTree(searchTree, *m_markerPublisher, *m_markerArrayPublisher);
     std::cout << "...visualization done." << std::endl;
 }
 

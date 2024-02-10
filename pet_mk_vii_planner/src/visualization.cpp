@@ -108,7 +108,7 @@ void visualizePath(
     {
         arrow.pose            = toPoseMsg(node.state.pose);
         arrow.pose.position.z = 0.02;
-        ++arrow.id;
+        arrow.id              = getUniqueId();
         arrowArray.markers.push_back(arrow);
     }
     markerArrayPub.publish(arrowArray);
@@ -160,7 +160,7 @@ void visualizeSearchTree(
     tree.forEachNode([&](const rrt::Node &node) {
         arrow.pose            = toPoseMsg(node.state.pose);
         arrow.pose.position.z = 0.01;
-        ++arrow.id;
+        arrow.id              = getUniqueId();
         arrowArray.markers.push_back(arrow);
     });
     markerArrayPub.publish(arrowArray);
