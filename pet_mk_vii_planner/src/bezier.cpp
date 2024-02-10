@@ -27,7 +27,7 @@ PenticBezier createPenticBezier(double duration, const ugl::Vector3 &pos0,
 {
     static constexpr int kDegree = 5;
 
-    /// TODO: Re-derive magic numbers 5 and 2.
+    /// TODO: Re-derive magic numbers 20 and 2.
     const ugl::Vector3 p0 = pos0;
     const ugl::Vector3 p1 = duration / kDegree * vel0 + p0;
     const ugl::Vector3 p2 = duration * duration / 20 * acc0 + 2 * p1 - p0;
