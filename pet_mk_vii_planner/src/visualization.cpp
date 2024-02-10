@@ -166,11 +166,17 @@ void visualizeSearchTree(
     markerArrayPub.publish(arrowArray);
 }
 
-void resetVisualization(rclcpp::Publisher<visualization_msgs::msg::Marker> &markerPub)
+void resetVisualization(
+    rclcpp::Publisher<visualization_msgs::msg::Marker>      &markerPub,
+    rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub)
 {
     visualization_msgs::msg::Marker marker{};
     marker.action = visualization_msgs::msg::Marker::DELETEALL;
     markerPub.publish(marker);
+
+    visualization_msgs::msg::MarkerArray markerArray{};
+    markerArray.markers.push_back(marker);
+    markerArrayPub.publish(markerArray);
 }
 
 } // namespace pet

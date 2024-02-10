@@ -21,6 +21,8 @@ void visualizeSearchTree(
     const rrt::Graph &tree, rclcpp::Publisher<visualization_msgs::msg::Marker> &markerPub,
     rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub);
 
-void resetVisualization(rclcpp::Publisher<visualization_msgs::msg::Marker> &markerPub);
+void resetVisualization(
+    rclcpp::Publisher<visualization_msgs::msg::Marker>      &markerPub,
+    rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub);
 
 } // namespace pet

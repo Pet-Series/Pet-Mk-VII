@@ -84,7 +84,7 @@ void RrtSimulation::runRrt()
     std::cout << "...search done." << std::endl;
 
     std::cout << "Starting visualization..." << std::endl;
-    resetVisualization(*m_markerPublisher);
+    resetVisualization(*m_markerPublisher, *m_markerArrayPublisher);
     if (path.has_value())
     {
         visualizePath(path.value(), *m_markerPublisher, *m_markerArrayPublisher);
