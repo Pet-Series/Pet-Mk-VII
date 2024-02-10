@@ -74,8 +74,8 @@ std::optional<std::pair<VehicleState, Path>> steerBezier(const VehicleState &sta
         return {};
     }
 
-    const auto endState = VehicleState{bezier.planarPose(bezier.duration()),
-                                       bezier.velocity(bezier.duration()).norm()};
+    // We do exact matching, so we can re-use the desired end state.
+    const auto endState = desiredEnd;
 
     /// TODO: Should start time always start from zero or be based on timestamp from
     /// previous path?
