@@ -3,21 +3,13 @@
 #include "pet_mk_vii_planner/collision_map.hpp"
 #include "pet_mk_vii_planner/goal.hpp"
 #include "pet_mk_vii_planner/graph.hpp"
+#include "pet_mk_vii_planner/rrtDefinitions.hpp"
 
 #include <optional>
 #include <utility>
-#include <vector>
 
 namespace pet::rrt
 {
-
-struct VehicleModel
-{
-    double maxSpeed     = 0.5;
-    double maxCurvature = 2.0;
-    // double maxSpeed     = 10.0;
-    // double maxCurvature = 20.0;
-};
 
 using SteerFunction = std::optional<std::pair<VehicleState, Path>> (*)(
     const VehicleState &start, const VehicleState &desiredEnd,

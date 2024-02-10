@@ -2,6 +2,7 @@
 #include "pet_mk_vii_planner/goal.hpp"
 #include "pet_mk_vii_planner/graph.hpp"
 #include "pet_mk_vii_planner/rrt.hpp"
+#include "pet_mk_vii_planner/rrtDefinitions.hpp"
 #include "visualization.hpp"
 
 #include <ugl/lie_group/pose.h>

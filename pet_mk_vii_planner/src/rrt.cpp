@@ -1,6 +1,7 @@
 #include "pet_mk_vii_planner/rrt.hpp"
 
 #include "pet_mk_vii_planner/bezier.hpp"
+#include "pet_mk_vii_planner/rrtDefinitions.hpp"
 #include "utility/interpolation.hpp"
 
 #include <ugl/lie_group/pose.h>

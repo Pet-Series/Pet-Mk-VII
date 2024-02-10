@@ -1,26 +1,12 @@
 #pragma once
 
-#include <ugl/lie_group/pose.h>
+#include "pet_mk_vii_planner/rrtDefinitions.hpp"
 
 #include <functional>
 #include <vector>
 
 namespace pet::rrt
 {
-
-struct VehicleState
-{
-    ugl::lie::Pose pose;
-    double         velocity;
-};
-
-struct PoseStamped
-{
-    ugl::lie::Pose pose;
-    double         timestamp;
-};
-
-using Path = std::vector<PoseStamped>;
 
 struct Node
 {

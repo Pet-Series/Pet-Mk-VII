@@ -1,5 +1,7 @@
 #include "pet_mk_vii_planner/graph.hpp"
 
+#include <ugl/lie_group/pose.h>
+
 #include <algorithm>
 #include <limits>
 
