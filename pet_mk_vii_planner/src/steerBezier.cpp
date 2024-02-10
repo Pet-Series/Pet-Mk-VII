@@ -47,6 +47,36 @@ template <int degree> double maxCurvature(const Bezier<degree> &curve)
     return maxCurvature;
 }
 
+template <int degree>
+double getPlanarForwardVelocity(const Bezier<degree>     &bezier,
+                                const ugl::lie::Rotation &orientation, double t)
+{
+    const ugl::Vector3 globalVel = bezier.velocity(t);
+    const ugl::Vector3 localVel  = orientation.inverse() * globalVel;
+    return localVel.x();
+}
+
+template <int degree>
+Path computePath(const Bezier<degree> &bezier, double startTime, int numberOfPoints)
+{
+    assert(numberOfPoints > 1);
+    std::vector<rrt::PoseStamped> path{};
+
+    const double ratioDelta = 1.0 / (numberOfPoints - 1);
+    double       ratio      = 0.0;
+    for (int i = 0; i < numberOfPoints; ++i)
+    {
+        const auto relativeTimestamp = util::interpolate(0.0, bezier.duration(), ratio);
+        const auto pose              = bezier.planarPose(relativeTimestamp);
+        const auto forwardVelocity =
+            getPlanarForwardVelocity(bezier, pose.rotation(), relativeTimestamp);
+        path.push_back(
+            rrt::PoseStamped{pose, forwardVelocity, startTime + relativeTimestamp});
+        ratio += ratioDelta;
+    }
+    return path;
+}
+
 } // namespace
 
 std::optional<std::pair<VehicleState, Path>> steerBezier(const VehicleState &start,
@@ -80,11 +110,7 @@ std::optional<std::pair<VehicleState, Path>> steerBezier(const VehicleState &sta
     /// TODO: Should start time always start from zero or be based on timestamp from
     /// previous path?
     const double startTime = 0.0;
-    const double endTime   = startTime + bezier.duration();
-    const auto   path      = util::interpolatePath(
-        PoseStamped{bezier.planarPose(0), start.velocity, startTime},
-        PoseStamped{bezier.planarPose(bezier.duration()), endState.velocity, endTime},
-        20);
+    const auto   path      = computePath(bezier, startTime, 20);
 
     return std::pair{endState, path};
 }
