@@ -26,6 +26,7 @@ struct VehicleState
 struct PoseStamped
 {
     ugl::lie::Pose pose;
+    double         velocity;
     double         timestamp;
 };
 

@@ -23,8 +23,9 @@ std::vector<rrt::PoseStamped> interpolatePath(const rrt::PoseStamped &start,
     for (int i = 0; i < numberOfPoints; ++i)
     {
         const auto pose      = ugl::lie::interpolate(start.pose, end.pose, ratio);
+        const auto velocity  = interpolate(start.velocity, end.velocity, ratio);
         const auto timestamp = interpolate(start.timestamp, end.timestamp, ratio);
-        path.push_back(rrt::PoseStamped{pose, timestamp});
+        path.push_back(rrt::PoseStamped{pose, velocity, timestamp});
         ratio += ratioDelta;
     }
     return path;

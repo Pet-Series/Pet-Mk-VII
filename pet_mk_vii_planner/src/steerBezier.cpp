@@ -81,8 +81,9 @@ std::optional<std::pair<VehicleState, Path>> steerBezier(const VehicleState &sta
     const double startTime = 0.0;
     const double endTime   = startTime + bezier.duration();
     const auto   path      = util::interpolatePath(
-        PoseStamped{bezier.planarPose(0), startTime},
-        PoseStamped{bezier.planarPose(bezier.duration()), endTime}, 20);
+        PoseStamped{bezier.planarPose(0), start.velocity, startTime},
+        PoseStamped{bezier.planarPose(bezier.duration()), endState.velocity, endTime},
+        20);
 
     return std::pair{endState, path};
 }

@@ -57,8 +57,9 @@ std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState &start
     /// previous path?
     const double startTime = 0.0;
     const double endTime   = startTime + controlDuration;
-    const auto   path      = util::interpolatePath(PoseStamped{start.pose, startTime},
-                                                   PoseStamped{endState.pose, endTime}, 20);
+    const auto   path =
+        util::interpolatePath(PoseStamped{start.pose, endState.velocity, startTime},
+                              PoseStamped{endState.pose, endState.velocity, endTime}, 20);
 
     return std::pair{endState, path};
 }
