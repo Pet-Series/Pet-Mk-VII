@@ -114,10 +114,13 @@ void RvizVisualizer::visualizePath(const std::vector<rrt::Node> &path)
     arrow.color.a         = 1.0f;
     for (const auto &node : path)
     {
-        arrow.pose            = toPoseMsg(node.state.pose);
-        arrow.pose.position.z = 0.02;
-        arrow.id              = getUniqueId();
-        arrowArray.markers.push_back(arrow);
+        for (const auto &pose : node.pathFromParent)
+        {
+            arrow.pose            = toPoseMsg(pose.pose);
+            arrow.pose.position.z = 0.02;
+            arrow.id              = getUniqueId();
+            arrowArray.markers.push_back(arrow);
+        }
     }
     m_markerArrayPublisher->publish(arrowArray);
 }
