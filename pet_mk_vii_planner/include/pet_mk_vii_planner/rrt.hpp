@@ -35,12 +35,4 @@ VehicleState sampleState(const Goal &goal, const VehicleModel &vehicleModel,
 
 bool shouldSampleFromGoal();
 
-std::optional<std::pair<VehicleState, Path>>
-steerBezier(const VehicleState &start, const VehicleState &desiredEnd,
-            const VehicleModel &vehicleModel);
-
-std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState &start,
-                                                       const VehicleState &desiredEnd,
-                                                       const VehicleModel &vehicleModel);
-
 } // namespace pet::rrt

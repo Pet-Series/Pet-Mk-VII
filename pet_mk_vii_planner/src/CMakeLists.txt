@@ -8,6 +8,8 @@ target_sources(rrt
     ${PROJECT_SOURCE_DIR}/src/graph.cpp
     ${PROJECT_SOURCE_DIR}/src/rrt.cpp
     ${PROJECT_SOURCE_DIR}/src/rrtDefinitions.cpp
+    ${PROJECT_SOURCE_DIR}/src/steerBezier.cpp
+    ${PROJECT_SOURCE_DIR}/src/steerCtrv.cpp
     ${PROJECT_SOURCE_DIR}/src/utility/algorithm.cpp
     ${PROJECT_SOURCE_DIR}/src/utility/interpolation.cpp
 )

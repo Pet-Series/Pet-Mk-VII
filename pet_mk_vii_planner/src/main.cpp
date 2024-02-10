@@ -3,6 +3,8 @@
 #include "pet_mk_vii_planner/graph.hpp"
 #include "pet_mk_vii_planner/rrt.hpp"
 #include "pet_mk_vii_planner/rrtDefinitions.hpp"
+#include "pet_mk_vii_planner/steerBezier.hpp"
+#include "pet_mk_vii_planner/steerCtrv.hpp"
 #include "visualization.hpp"
 
 #include <ugl/lie_group/pose.h>

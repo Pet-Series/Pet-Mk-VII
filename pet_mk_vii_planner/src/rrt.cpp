@@ -1,57 +1,15 @@
 #include "pet_mk_vii_planner/rrt.hpp"
 
-#include "pet_mk_vii_planner/bezier.hpp"
 #include "pet_mk_vii_planner/rrtDefinitions.hpp"
-#include "utility/interpolation.hpp"
 
-#include <ugl/lie_group/pose.h>
+#include <ugl/lie_group/rotation.h>
 #include <ugl/math/vector.h>
 #include <ugl/random/uniform_distribution.h>
 
-#include <Eigen/Dense>
 #include <Eigen/Geometry>
-
-#include <cmath>
 
 namespace pet::rrt
 {
-namespace
-{
-
-template <int degree> double maxSpeed(const Bezier<degree> &curve)
-{
-    static constexpr double kTimeStepSize = 0.05;
-
-    const auto velocityCurve = curve.getDerivative();
-    double     maxSpeed      = -std::numeric_limits<double>::infinity();
-    for (double t = 0.0; t <= velocityCurve.duration(); t += kTimeStepSize)
-    {
-        const double speed = velocityCurve.value(t).norm();
-        if (speed > maxSpeed)
-        {
-            maxSpeed = speed;
-        }
-    }
-    return maxSpeed;
-}
-
-template <int degree> double maxCurvature(const Bezier<degree> &curve)
-{
-    static constexpr double kTimeStepSize = 0.05;
-
-    double maxCurvature = -std::numeric_limits<double>::infinity();
-    for (double t = 0.0; t <= curve.duration(); t += kTimeStepSize)
-    {
-        const double curvature = curve.planarCurvature(t);
-        if (curvature > maxCurvature)
-        {
-            maxCurvature = curvature;
-        }
-    }
-    return maxCurvature;
-}
-
-} // namespace
 
 std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
                                         const SearchContext &context)
@@ -111,97 +69,6 @@ bool shouldSampleFromGoal()
 {
     static constexpr double goalProbability = 0.1;
     return ugl::random::UniformDistribution<1>::sample(0.0, 1.0) < goalProbability;
-}
-
-std::optional<std::pair<VehicleState, Path>> steerBezier(const VehicleState &start,
-                                                         const VehicleState &desiredEnd,
-                                                         const VehicleModel &vehicleModel)
-{
-    const double       duration = 1.0;
-    const ugl::Vector3 startVelocity =
-        start.pose.rotate(ugl::Vector3{start.velocity, 0.0, 0.0});
-    const ugl::Vector3 endVelocity =
-        desiredEnd.pose.rotate(ugl::Vector3{desiredEnd.velocity, 0.0, 0.0});
-
-    const CubicBezier bezier =
-        buildCubicBezier(duration, start.pose.position(), startVelocity,
-                         desiredEnd.pose.position(), endVelocity);
-
-    /// TODO: Fall back on 'steerCtrv()' if kinematic constrainst are not fulfilled fails?
-    /// TODO: Collision check against map. What to do if fail?
-    if (maxSpeed(bezier) > vehicleModel.maxSpeed)
-    {
-        return {};
-    }
-    if (maxCurvature(bezier) > vehicleModel.maxCurvature)
-    {
-        return {};
-    }
-
-    const auto endState = VehicleState{bezier.planarPose(bezier.duration()),
-                                       bezier.velocity(bezier.duration()).norm()};
-
-    /// TODO: Should start time always start from zero or be based on timestamp from
-    /// previous path?
-    const double startTime = 0.0;
-    const double endTime   = startTime + bezier.duration();
-    const auto   path      = util::interpolatePath(
-        PoseStamped{bezier.planarPose(0), startTime},
-        PoseStamped{bezier.planarPose(bezier.duration()), endTime}, 5);
-
-    return std::pair{endState, path};
-}
-
-std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState &start,
-                                                       const VehicleState &desiredEnd,
-                                                       const VehicleModel &vehicleModel)
-{
-    const ugl::Vector<6> delta = ugl::lie::ominus(desiredEnd.pose, start.pose);
-
-    double controlDuration = 1.0;
-    double forwardVel      = delta[3] / controlDuration;
-    double yawrate         = delta[2] / controlDuration;
-
-    // If speed is too low, we will not get anywhere so adding a new node is pointless.
-    if (std::abs(forwardVel) < 1e-3)
-    {
-        return {};
-    }
-
-    const double curvature = std::abs(yawrate / forwardVel);
-    if (curvature > vehicleModel.maxCurvature)
-    {
-        // Adjust forward velocity such that we get maximum curvature.
-        const double adjustment = curvature / vehicleModel.maxCurvature;
-        forwardVel *= adjustment;
-        controlDuration /= adjustment;
-    }
-
-    if (std::abs(forwardVel) > vehicleModel.maxSpeed)
-    {
-        // Adjust forward velocity such that we get maximum speed.
-        const double adjustment = vehicleModel.maxSpeed / std::abs(forwardVel);
-        forwardVel *= adjustment;
-        yawrate *= adjustment;
-        controlDuration /= adjustment;
-    }
-
-    ugl::Vector<6> velocity = ugl::Vector<6>::Zero();
-    velocity[2]             = yawrate;
-    velocity[3]             = forwardVel;
-
-    VehicleState endState;
-    endState.pose     = ugl::lie::oplus(start.pose, velocity);
-    endState.velocity = velocity[3];
-
-    /// TODO: Should start time always start from zero or be based on timestamp from
-    /// previous path?
-    const double startTime = 0.0;
-    const double endTime   = startTime + controlDuration;
-    const auto   path      = util::interpolatePath(PoseStamped{start.pose, startTime},
-                                                   PoseStamped{endState.pose, endTime}, 5);
-
-    return std::pair{endState, path};
 }
 
 } // namespace pet::rrt
