@@ -13,10 +13,10 @@ namespace pet::rrt
 
 struct VehicleModel
 {
-    // double maxSpeed     = 0.5;
-    // double maxCurvature = 2.0;
-    double maxSpeed     = 10.0;
-    double maxCurvature = 20.0;
+    double maxSpeed     = 0.5;
+    double maxCurvature = 2.0;
+    // double maxSpeed     = 10.0;
+    // double maxCurvature = 20.0;
 };
 
 using SteerFunction = std::optional<std::pair<VehicleState, Path>> (*)(
@@ -42,6 +42,10 @@ VehicleState sampleState(const Goal &goal, const VehicleModel &vehicleModel,
                          const BoundingBox &searchSpace);
 
 bool shouldSampleFromGoal();
+
+std::optional<std::pair<VehicleState, Path>>
+steerBezier(const VehicleState &start, const VehicleState &desiredEnd,
+            const VehicleModel &vehicleModel);
 
 std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState &start,
                                                        const VehicleState &desiredEnd,

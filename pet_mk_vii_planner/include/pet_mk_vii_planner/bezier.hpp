@@ -1,11 +1,15 @@
 #pragma once
 
+#include <ugl/lie_group/pose.h>
 #include <ugl/math/vector.h>
+
+#include <Eigen/Geometry>
 
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <cmath>
+#include <complex>
 #include <utility>
 
 namespace pet::rrt
@@ -35,9 +39,16 @@ template <int degree> class Bezier
     ugl::Vector3 start() const { return m_points.front(); }
     ugl::Vector3 end() const { return m_points.back(); }
 
+    ugl::Vector3 value(double t) const { return evaluate(t); }
     ugl::Vector3 position(double t) const { return evaluate(t); }
     ugl::Vector3 velocity(double t) const { return getDerivative().position(t); }
     ugl::Vector3 acceleration(double t) const { return getDerivative().velocity(t); }
+
+    /// @brief Calculates the curvature of the curve projected on the xy-plane.
+    double planarCurvature(double t) const;
+
+    /// @brief Calculates the pose of the curve projected on the xy-plane.
+    ugl::lie::Pose planarPose(double t) const;
 
     Bezier<degree - 1> getDerivative() const
     {
@@ -85,7 +96,7 @@ template <int degree> class Bezier
             coefficients[j] = cj;
         }
         std::reverse(std::begin(coefficients), std::end(coefficients));
-        return coeffs;
+        return coefficients;
     }
 
   private:
@@ -106,6 +117,34 @@ template <> inline ugl::Vector3 Bezier<0>::acceleration(double /*t*/) const
 template <> inline ugl::Vector3 Bezier<1>::acceleration(double /*t*/) const
 {
     return ugl::Vector3::Zero();
+}
+
+template <int degree> double Bezier<degree>::planarCurvature(double t) const
+{
+    const auto vel = velocity(t);
+    const auto acc = acceleration(t);
+
+    const auto vel2d = ugl::Vector<2>{vel.x(), vel.y()};
+
+    // General formula for curvature of curves in two dimensions.
+    const double curvature =
+        (vel.x() * acc.y() - vel.y() * acc.x()) / std::pow(vel2d.norm(), 3);
+
+    return curvature;
+}
+
+template <int degree> ugl::lie::Pose Bezier<degree>::planarPose(double t) const
+{
+    auto getHeading = [](const ugl::Vector<2> &direction) {
+        const auto a = std::complex{direction.x(), direction.y()};
+        return std::arg(a);
+    };
+
+    const auto vel     = velocity(t);
+    const auto heading = getHeading(ugl::Vector<2>{vel.x(), vel.y()});
+    const auto orientation =
+        ugl::UnitQuaternion{Eigen::AngleAxisd{heading, ugl::Vector3::UnitZ()}};
+    return ugl::lie::Pose{orientation, position(t)};
 }
 
 using CubicBezier  = Bezier<3>;
