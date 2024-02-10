@@ -48,6 +48,16 @@ geometry_msgs::msg::Pose toPoseMsg(const ugl::lie::Pose &pose)
     return msg;
 }
 
+void appendToLineList(const rrt::Path                        &path,
+                      std::vector<geometry_msgs::msg::Point> &points)
+{
+    util::adjacent_for_each(path.cbegin(), path.cend(),
+                            [&points](const auto &start, const auto &end) {
+                                points.push_back(toPointMsg(start.pose.position()));
+                                points.push_back(toPointMsg(end.pose.position()));
+                            });
+}
+
 } // namespace
 
 void visualizePath(
@@ -73,13 +83,7 @@ void visualizePath(
     std::for_each(path.cbegin(), path.cend(), [&](const rrt::Node &node) {
         if (!rrt::isRoot(node))
         {
-            const auto &pathFromParent = node.pathFromParent;
-            util::adjacent_for_each(
-                pathFromParent.cbegin(), pathFromParent.cend(),
-                [&lineList](const auto &start, const auto &end) {
-                    lineList.points.push_back(toPointMsg(start.pose.position()));
-                    lineList.points.push_back(toPointMsg(end.pose.position()));
-                });
+            appendToLineList(node.pathFromParent, lineList.points);
         }
     });
     markerPub.publish(lineList);
@@ -132,13 +136,7 @@ void visualizeSearchTree(
     tree.forEachNode([&](const rrt::Node &node) {
         if (!rrt::isRoot(node))
         {
-            const auto &path = node.pathFromParent;
-            util::adjacent_for_each(
-                path.cbegin(), path.cend(),
-                [&lineList](const auto &start, const auto &end) {
-                    lineList.points.push_back(toPointMsg(start.pose.position()));
-                    lineList.points.push_back(toPointMsg(end.pose.position()));
-                });
+            appendToLineList(node.pathFromParent, lineList.points);
         }
     });
     markerPub.publish(lineList);
