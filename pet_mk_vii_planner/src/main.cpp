@@ -1,3 +1,4 @@
+#include "pathVerification.hpp"
 #include "pet_mk_vii_planner/collision_map.hpp"
 #include "pet_mk_vii_planner/goal.hpp"
 #include "pet_mk_vii_planner/graph.hpp"
@@ -82,6 +83,11 @@ void RrtSimulation::runRrt()
         m_visualizer.visualizePath(path.value());
     }
     std::cout << "...visualization done." << std::endl;
+
+    std::cout << "Starting path verification..." << std::endl;
+    // verifyVelocityContinuity(searchTree);
+    verifyHeadingContinuity(searchTree);
+    std::cout << "...path verification done." << std::endl;
 }
 
 } // namespace pet

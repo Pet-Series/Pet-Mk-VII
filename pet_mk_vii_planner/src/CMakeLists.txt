@@ -6,6 +6,7 @@ target_sources(rrt
     ${PROJECT_SOURCE_DIR}/src/collision_map.cpp
     ${PROJECT_SOURCE_DIR}/src/goal.cpp
     ${PROJECT_SOURCE_DIR}/src/graph.cpp
+    ${PROJECT_SOURCE_DIR}/src/pathVerification.cpp
     ${PROJECT_SOURCE_DIR}/src/rrt.cpp
     ${PROJECT_SOURCE_DIR}/src/rrtDefinitions.cpp
     ${PROJECT_SOURCE_DIR}/src/steerBezier.cpp
