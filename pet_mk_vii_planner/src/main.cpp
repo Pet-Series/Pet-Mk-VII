@@ -62,6 +62,11 @@ void RrtSimulation::runRrt()
     std::cout << "Starting search..." << std::endl;
     for (int i = 0; i < 100; ++i)
     {
+        if (!rclcpp::ok())
+        {
+            break; // e.g. ctrl-C by user
+        }
+
         path = rrt::search(goal, searchTree, searchContext);
 
         searchHistory.push_back(searchTree);
