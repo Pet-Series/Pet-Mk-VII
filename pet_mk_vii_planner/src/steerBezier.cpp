@@ -6,6 +6,7 @@
 
 #include <ugl/math/vector.h>
 
+#include <cmath>
 #include <limits>
 
 namespace pet::rrt
@@ -37,7 +38,7 @@ template <int degree> double maxCurvature(const Bezier<degree> &curve)
     double maxCurvature = -std::numeric_limits<double>::infinity();
     for (double t = 0.0; t <= curve.duration(); t += kTimeStepSize)
     {
-        const double curvature = curve.planarCurvature(t);
+        const double curvature = std::abs(curve.planarCurvature(t));
         if (curvature > maxCurvature)
         {
             maxCurvature = curvature;
