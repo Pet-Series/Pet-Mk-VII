@@ -105,7 +105,6 @@ void RvizVisualizer::visualizePath(const std::vector<rrt::Node> &path)
     arrow.lifetime        = rclcpp::Duration{0, 0};
     arrow.type            = visualization_msgs::msg::Marker::ARROW;
     arrow.action          = visualization_msgs::msg::Marker::ADD;
-    arrow.scale.x         = 0.2;
     arrow.scale.y         = 0.02;
     arrow.scale.z         = 0.02;
     arrow.color.r         = 0.1f;
@@ -117,6 +116,7 @@ void RvizVisualizer::visualizePath(const std::vector<rrt::Node> &path)
         for (const auto &pose : node.pathFromParent)
         {
             arrow.pose            = toPoseMsg(pose.pose);
+            arrow.scale.x         = pose.velocity / 5.0;
             arrow.pose.position.z = 0.02;
             arrow.id              = getUniqueId();
             arrowArray.markers.push_back(arrow);
