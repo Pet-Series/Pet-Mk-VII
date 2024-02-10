@@ -65,17 +65,17 @@ void visualizePath(
     lineList.action          = visualization_msgs::msg::Marker::ADD;
     lineList.pose.position.z = 0.01; // Use height to "overlay" in the visualization.
     lineList.scale.x         = 0.05;
-    lineList.color.r         = 0.1;
-    lineList.color.g         = 0.8;
-    lineList.color.b         = 0.1;
-    lineList.color.a         = 0.8;
+    lineList.color.r         = 0.1f;
+    lineList.color.g         = 0.8f;
+    lineList.color.b         = 0.1f;
+    lineList.color.a         = 0.8f;
 
     std::for_each(path.cbegin(), path.cend(), [&](const rrt::Node &node) {
         if (!rrt::isRoot(node))
         {
-            const auto &path = node.pathFromParent;
+            const auto &pathFromParent = node.pathFromParent;
             util::adjacent_for_each(
-                path.cbegin(), path.cend(),
+                pathFromParent.cbegin(), pathFromParent.cend(),
                 [&lineList](const auto &start, const auto &end) {
                     lineList.points.push_back(toPointMsg(start.pose.position()));
                     lineList.points.push_back(toPointMsg(end.pose.position()));
@@ -96,10 +96,10 @@ void visualizePath(
     arrow.scale.x         = 0.2;
     arrow.scale.y         = 0.02;
     arrow.scale.z         = 0.02;
-    arrow.color.r         = 0.1;
-    arrow.color.g         = 0.9;
-    arrow.color.b         = 0.1;
-    arrow.color.a         = 1.0;
+    arrow.color.r         = 0.1f;
+    arrow.color.g         = 0.9f;
+    arrow.color.b         = 0.1f;
+    arrow.color.a         = 1.0f;
     for (const auto &node : path)
     {
         arrow.pose            = toPoseMsg(node.state.pose);
@@ -124,10 +124,10 @@ void visualizeSearchTree(
     lineList.type            = visualization_msgs::msg::Marker::LINE_LIST;
     lineList.action          = visualization_msgs::msg::Marker::ADD;
     lineList.scale.x         = 0.02;
-    lineList.color.r         = 0.3;
-    lineList.color.g         = 0.6;
-    lineList.color.b         = 1.0;
-    lineList.color.a         = 0.6;
+    lineList.color.r         = 0.3f;
+    lineList.color.g         = 0.6f;
+    lineList.color.b         = 1.0f;
+    lineList.color.a         = 0.6f;
 
     tree.forEachNode([&](const rrt::Node &node) {
         if (!rrt::isRoot(node))
@@ -155,10 +155,10 @@ void visualizeSearchTree(
     arrow.scale.x         = 0.2;
     arrow.scale.y         = 0.02;
     arrow.scale.z         = 0.02;
-    arrow.color.r         = 0.3;
-    arrow.color.g         = 0.6;
-    arrow.color.b         = 1.0;
-    arrow.color.a         = 0.6;
+    arrow.color.r         = 0.3f;
+    arrow.color.g         = 0.6f;
+    arrow.color.b         = 1.0f;
+    arrow.color.a         = 0.6f;
     tree.forEachNode([&](const rrt::Node &node) {
         arrow.pose            = toPoseMsg(node.state.pose);
         arrow.pose.position.z = 0.01;

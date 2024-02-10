@@ -39,7 +39,7 @@ class RrtSimulation : public rclcpp::Node
 
 void RrtSimulation::runRrt()
 {
-    const rrt::SearchContext context = [] {
+    const rrt::SearchContext searchContext = [] {
         rrt::SearchContext context{};
         context.maxIterations    = 10;
         context.vehicleModel     = rrt::VehicleModel{};
@@ -62,7 +62,7 @@ void RrtSimulation::runRrt()
     std::cout << "Starting search..." << std::endl;
     for (int i = 0; i < 100; ++i)
     {
-        path = rrt::search(goal, searchTree, context);
+        path = rrt::search(goal, searchTree, searchContext);
 
         searchHistory.push_back(searchTree);
 

@@ -63,7 +63,7 @@ const Node &Graph::storeNode(const Node &node)
 {
     m_nodes.push_back(node);
     Node &storedNode = m_nodes.back();
-    storedNode.id    = m_nodes.size() - 1;
+    storedNode.id    = static_cast<int>(m_nodes.size() - 1);
     if (!isRoot(storedNode))
     {
         m_nodes[storedNode.parentId].childrenIds.push_back(storedNode.id);
