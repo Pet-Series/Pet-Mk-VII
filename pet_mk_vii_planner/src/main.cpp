@@ -9,7 +9,7 @@
 
 #include <ugl/lie_group/pose.h>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/node.hpp>
 
 #include <visualization_msgs/msg/marker.hpp>
 
@@ -23,21 +23,12 @@ namespace pet
 class RrtSimulation : public rclcpp::Node
 {
   public:
-    RrtSimulation() : Node("rrt_simulation")
-    {
-        m_markerPublisher =
-            this->create_publisher<visualization_msgs::msg::Marker>("rrt_marker", 10);
-        m_markerArrayPublisher =
-            this->create_publisher<visualization_msgs::msg::MarkerArray>(
-                "rrt_marker_array", 10);
-    }
+    RrtSimulation() : Node("rrt_simulation"), m_visualizer(*this) {}
 
     void runRrt();
 
   private:
-    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_markerPublisher;
-    rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
-        m_markerArrayPublisher;
+    RvizVisualizer m_visualizer;
 };
 
 void RrtSimulation::runRrt()
@@ -80,16 +71,15 @@ void RrtSimulation::runRrt()
             break;
         }
     }
-
     std::cout << "...search done." << std::endl;
 
     std::cout << "Starting visualization..." << std::endl;
-    resetVisualization(*m_markerPublisher, *m_markerArrayPublisher);
+    m_visualizer.resetVisualization();
     // visualizeMap(map);
-    visualizeSearchTree(searchTree, *m_markerPublisher, *m_markerArrayPublisher);
+    m_visualizer.visualizeSearchTree(searchTree);
     if (path.has_value())
     {
-        visualizePath(path.value(), *m_markerPublisher, *m_markerArrayPublisher);
+        m_visualizer.visualizePath(path.value());
     }
     std::cout << "...visualization done." << std::endl;
 }

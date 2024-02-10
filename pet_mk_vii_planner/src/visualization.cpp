@@ -5,6 +5,8 @@
 
 #include <ugl/lie_group/pose.h>
 
+#include <rclcpp/node.hpp>
+
 #include <geometry_msgs/msg/point.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <visualization_msgs/msg/marker.hpp>
@@ -60,10 +62,16 @@ void appendToLineList(const rrt::Path                        &path,
 
 } // namespace
 
-void visualizePath(
-    const std::vector<rrt::Node>                            &path,
-    rclcpp::Publisher<visualization_msgs::msg::Marker>      &markerPub,
-    rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub)
+RvizVisualizer::RvizVisualizer(rclcpp::Node &nodeHandle)
+{
+    m_markerPublisher =
+        nodeHandle.create_publisher<visualization_msgs::msg::Marker>("rrt_marker", 10);
+    m_markerArrayPublisher =
+        nodeHandle.create_publisher<visualization_msgs::msg::MarkerArray>(
+            "rrt_marker_array", 10);
+}
+
+void RvizVisualizer::visualizePath(const std::vector<rrt::Node> &path)
 {
     visualization_msgs::msg::Marker lineList{};
     lineList.header.frame_id = "map";
@@ -86,7 +94,7 @@ void visualizePath(
             appendToLineList(node.pathFromParent, lineList.points);
         }
     });
-    markerPub.publish(lineList);
+    m_markerPublisher->publish(lineList);
 
     visualization_msgs::msg::MarkerArray arrowArray{};
     visualization_msgs::msg::Marker      arrow{};
@@ -111,12 +119,10 @@ void visualizePath(
         arrow.id              = getUniqueId();
         arrowArray.markers.push_back(arrow);
     }
-    markerArrayPub.publish(arrowArray);
+    m_markerArrayPublisher->publish(arrowArray);
 }
 
-void visualizeSearchTree(
-    const rrt::Graph &tree, rclcpp::Publisher<visualization_msgs::msg::Marker> &markerPub,
-    rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub)
+void RvizVisualizer::visualizeSearchTree(const rrt::Graph &tree)
 {
     visualization_msgs::msg::Marker lineList{};
 
@@ -139,7 +145,7 @@ void visualizeSearchTree(
             appendToLineList(node.pathFromParent, lineList.points);
         }
     });
-    markerPub.publish(lineList);
+    m_markerPublisher->publish(lineList);
 
     visualization_msgs::msg::MarkerArray arrowArray{};
     visualization_msgs::msg::Marker      arrow{};
@@ -163,20 +169,18 @@ void visualizeSearchTree(
         arrow.id              = getUniqueId();
         arrowArray.markers.push_back(arrow);
     });
-    markerArrayPub.publish(arrowArray);
+    m_markerArrayPublisher->publish(arrowArray);
 }
 
-void resetVisualization(
-    rclcpp::Publisher<visualization_msgs::msg::Marker>      &markerPub,
-    rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub)
+void RvizVisualizer::resetVisualization()
 {
     visualization_msgs::msg::Marker marker{};
     marker.action = visualization_msgs::msg::Marker::DELETEALL;
-    markerPub.publish(marker);
+    m_markerPublisher->publish(marker);
 
     visualization_msgs::msg::MarkerArray markerArray{};
     markerArray.markers.push_back(marker);
-    markerArrayPub.publish(markerArray);
+    m_markerArrayPublisher->publish(markerArray);
 }
 
 } // namespace pet

@@ -2,6 +2,7 @@
 
 #include "pet_mk_vii_planner/graph.hpp"
 
+#include <rclcpp/node.hpp>
 #include <rclcpp/publisher.hpp>
 
 #include <visualization_msgs/msg/marker.hpp>
@@ -12,17 +13,21 @@
 namespace pet
 {
 
-void visualizePath(
-    const std::vector<rrt::Node>                            &path,
-    rclcpp::Publisher<visualization_msgs::msg::Marker>      &markerPub,
-    rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub);
+class RvizVisualizer
+{
+  public:
+    explicit RvizVisualizer(rclcpp::Node &nodeHandle);
 
-void visualizeSearchTree(
-    const rrt::Graph &tree, rclcpp::Publisher<visualization_msgs::msg::Marker> &markerPub,
-    rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub);
+    void visualizePath(const std::vector<rrt::Node> &path);
 
-void resetVisualization(
-    rclcpp::Publisher<visualization_msgs::msg::Marker>      &markerPub,
-    rclcpp::Publisher<visualization_msgs::msg::MarkerArray> &markerArrayPub);
+    void visualizeSearchTree(const rrt::Graph &tree);
+
+    void resetVisualization();
+
+  private:
+    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_markerPublisher;
+    rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
+        m_markerArrayPublisher;
+};
 
 } // namespace pet
