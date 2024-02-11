@@ -22,14 +22,12 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
         const Node &parentNode = tree.findClosest(sampledState);
 
         /// TODO: Perform collision check against map.
-        /// TODO: Implement steering function using Bezier curves.
         const auto result =
             context.steerFunction(parentNode.state, sampledState, context.vehicleModel);
         if (result.has_value())
         {
             const auto [reachedState, pathFromParent] = result.value();
             const Node &newNode = tree.addNode(reachedState, pathFromParent, parentNode);
-            /// TODO: Consider velocity when determining if goal is reached.
             if (goal.isReached(reachedState))
             {
                 return tree.getPathFromRoot(newNode);

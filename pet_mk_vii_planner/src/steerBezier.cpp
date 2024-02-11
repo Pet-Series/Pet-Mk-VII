@@ -138,13 +138,12 @@ steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
     const ugl::Vector3 p3 = desiredEnd.pose.position();
     const CubicBezier bezier{duration, {p0, p1, p2, p3}};
 
-    /// TODO: Collision check against map. What to do if fail?
     if (maxCurvature(bezier) > vehicleModel.maxCurvature)
     {
         return {};
     }
 
-    /// TODO: Set velocity profile and timestamps based max acceleration/braking and
+    /// TODO: Set velocity profile and timestamps based on max acceleration/braking and
     /// boundary velocities.
     VehicleState endState{};
     endState.pose      = desiredEnd.pose;
@@ -169,8 +168,6 @@ steerBezierKinematic(const VehicleState &start, const VehicleState &desiredEnd,
         buildCubicBezier(duration, start.pose.position(), startVelocity,
                          desiredEnd.pose.position(), endVelocity);
 
-    /// TODO: Fall back on 'steerCtrv()' if kinematic constrainst are not fulfilled fails?
-    /// TODO: Collision check against map. What to do if fail?
     if (maxSpeed(bezier) > vehicleModel.maxSpeed)
     {
         return {};
