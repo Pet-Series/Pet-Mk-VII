@@ -79,6 +79,27 @@ Path computePath(const Bezier<degree> &bezier, double startTime, int numberOfPoi
     return path;
 }
 
+template <int degree>
+Path computePath(const Bezier<degree> &bezier, const VehicleState &startState,
+                 const VehicleState &endState, double startTime, int numberOfPoints)
+{
+    assert(numberOfPoints > 1);
+    std::vector<rrt::PoseStamped> path{};
+
+    const double ratioDelta = 1.0 / (numberOfPoints - 1);
+    double       ratio      = 0.0;
+    for (int i = 0; i < numberOfPoints; ++i)
+    {
+        const auto relativeTimestamp = util::interpolate(0.0, bezier.duration(), ratio);
+        const auto pose              = bezier.planarPose(relativeTimestamp);
+        const auto velocity =
+            util::interpolate(startState.velocity, endState.velocity, ratio);
+        path.push_back(rrt::PoseStamped{pose, velocity, startTime + relativeTimestamp});
+        ratio += ratioDelta;
+    }
+    return path;
+}
+
 } // namespace
 
 std::optional<std::pair<VehicleState, Path>>
@@ -114,27 +135,23 @@ steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
     const ugl::Vector3 p1 = start.pose.position() + startTangent * minRadius;
     const ugl::Vector3 p2 = desiredEnd.pose.position() - endTangent * minRadius;
     const ugl::Vector3 p3 = desiredEnd.pose.position();
-
     const CubicBezier bezier{duration, {p0, p1, p2, p3}};
 
     /// TODO: Collision check against map. What to do if fail?
-    // if (maxSpeed(bezier) > vehicleModel.maxSpeed)
-    // {
-    //     return {};
-    // }
     if (maxCurvature(bezier) > vehicleModel.maxCurvature)
     {
         return {};
     }
 
-    /// TODO: Calculate velocity of output path.
+    /// TODO: Set velocity profile  and timestamps based max acceleration/braking and
+    /// boundary velocities.
     auto endState     = desiredEnd;
     endState.velocity = endVelocity;
 
     /// TODO: Should start time always start from zero or be based on timestamp from
     /// previous path?
     const double startTime = 0.0;
-    const auto   path      = computePath(bezier, startTime, 10);
+    const auto   path      = computePath(bezier, start, endState, startTime, 10);
 
     return std::pair{endState, path};
 }
