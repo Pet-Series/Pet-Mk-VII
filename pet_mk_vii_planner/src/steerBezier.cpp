@@ -80,6 +80,44 @@ Path computePath(const Bezier<degree> &bezier, double startTime, int numberOfPoi
 } // namespace
 
 std::optional<std::pair<VehicleState, Path>>
+steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
+                const VehicleModel &vehicleModel)
+{
+    const double       duration     = 1.0;
+    const ugl::Vector3 startTangent = start.pose.rotate(ugl::Vector3::UnitX());
+    const ugl::Vector3 endTangent   = desiredEnd.pose.rotate(ugl::Vector3::UnitX());
+
+    const double minRadius = 1.0 / vehicleModel.maxCurvature;
+
+    const ugl::Vector3 p0 = start.pose.position();
+    const ugl::Vector3 p1 = start.pose.position() + startTangent * minRadius;
+    const ugl::Vector3 p2 = desiredEnd.pose.position() - endTangent * minRadius;
+    const ugl::Vector3 p3 = desiredEnd.pose.position();
+
+    const CubicBezier bezier{duration, {p0, p1, p2, p3}};
+
+    /// TODO: Collision check against map. What to do if fail?
+    // if (maxSpeed(bezier) > vehicleModel.maxSpeed)
+    // {
+    //     return {};
+    // }
+    if (maxCurvature(bezier) > vehicleModel.maxCurvature)
+    {
+        return {};
+    }
+
+    /// TODO: Calculate velocity of output path.
+    const auto endState = desiredEnd;
+
+    /// TODO: Should start time always start from zero or be based on timestamp from
+    /// previous path?
+    const double startTime = 0.0;
+    const auto   path      = computePath(bezier, startTime, 10);
+
+    return std::pair{endState, path};
+}
+
+std::optional<std::pair<VehicleState, Path>>
 steerBezierKinematic(const VehicleState &start, const VehicleState &desiredEnd,
                      const VehicleModel &vehicleModel)
 {

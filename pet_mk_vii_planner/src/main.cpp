@@ -41,7 +41,7 @@ void RrtSimulation::runRrt()
         context.vehicleFootprint = rrt::VehicleFootprint{{-0.02, 0.05}, {0.18, 0.05}};
         context.searchSpace      = rrt::BoundingBox{{-5.0, -5.0}, {5.0, 5.0}};
         context.collisionMap     = rrt::CollisionMap{};
-        context.steerFunction    = rrt::steerBezierKinematic;
+        context.steerFunction    = rrt::steerBezierPath;
         return context;
     }();
 
@@ -55,7 +55,7 @@ void RrtSimulation::runRrt()
     std::optional<std::vector<rrt::Node>> path{};
 
     std::cout << "Starting search..." << std::endl;
-    for (int i = 0; i < 5000; ++i)
+    for (int i = 0; i < 500; ++i)
     {
         if (!rclcpp::ok())
         {
