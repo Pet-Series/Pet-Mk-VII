@@ -79,9 +79,9 @@ Path computePath(const Bezier<degree> &bezier, double startTime, int numberOfPoi
 
 } // namespace
 
-std::optional<std::pair<VehicleState, Path>> steerBezier(const VehicleState &start,
-                                                         const VehicleState &desiredEnd,
-                                                         const VehicleModel &vehicleModel)
+std::optional<std::pair<VehicleState, Path>>
+steerBezierKinematic(const VehicleState &start, const VehicleState &desiredEnd,
+                     const VehicleModel &vehicleModel)
 {
     const double       duration = 1.0;
     const ugl::Vector3 startVelocity =

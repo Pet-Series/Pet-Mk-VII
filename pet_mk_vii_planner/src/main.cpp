@@ -41,7 +41,7 @@ void RrtSimulation::runRrt()
         context.vehicleFootprint = rrt::VehicleFootprint{{-0.02, 0.05}, {0.18, 0.05}};
         context.searchSpace      = rrt::BoundingBox{{-5.0, -5.0}, {5.0, 5.0}};
         context.collisionMap     = rrt::CollisionMap{};
-        context.steerFunction    = rrt::steerBezier;
+        context.steerFunction    = rrt::steerBezierKinematic;
         return context;
     }();
 
