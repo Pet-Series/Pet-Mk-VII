@@ -81,7 +81,7 @@ Path computePath(const Bezier<degree> &bezier, double startTime, int numberOfPoi
 
 template <int degree>
 Path computePath(const Bezier<degree> &bezier, const VehicleState &startState,
-                 const VehicleState &endState, double startTime, int numberOfPoints)
+                 const VehicleState &endState, int numberOfPoints)
 {
     assert(numberOfPoints > 1);
     std::vector<rrt::VehicleState> path{};
@@ -94,7 +94,8 @@ Path computePath(const Bezier<degree> &bezier, const VehicleState &startState,
         const auto pose              = bezier.planarPose(relativeTimestamp);
         const auto velocity =
             util::interpolate(startState.velocity, endState.velocity, ratio);
-        path.push_back(rrt::VehicleState{pose, velocity, startTime + relativeTimestamp});
+        path.push_back(
+            rrt::VehicleState{pose, velocity, startState.timestamp + relativeTimestamp});
         ratio += ratioDelta;
     }
     return path;
@@ -143,16 +144,14 @@ steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
         return {};
     }
 
-    /// TODO: Set velocity profile  and timestamps based max acceleration/braking and
+    /// TODO: Set velocity profile and timestamps based max acceleration/braking and
     /// boundary velocities.
-    auto endState     = desiredEnd;
-    endState.velocity = endVelocity;
+    VehicleState endState{};
+    endState.pose      = desiredEnd.pose;
+    endState.velocity  = endVelocity;
+    endState.timestamp = start.timestamp + duration;
 
-    /// TODO: Should start time always start from zero or be based on timestamp from
-    /// previous path?
-    const double startTime = 0.0;
-    const auto   path      = computePath(bezier, start, endState, startTime, 10);
-
+    const auto path = computePath(bezier, start, endState, 10);
     return std::pair{endState, path};
 }
 
@@ -181,14 +180,12 @@ steerBezierKinematic(const VehicleState &start, const VehicleState &desiredEnd,
         return {};
     }
 
-    // We do exact matching, so we can re-use the desired end state.
-    const auto endState = desiredEnd;
+    VehicleState endState{};
+    endState.pose      = desiredEnd.pose;
+    endState.velocity  = desiredEnd.velocity;
+    endState.timestamp = start.timestamp + duration;
 
-    /// TODO: Should start time always start from zero or be based on timestamp from
-    /// previous path?
-    const double startTime = 0.0;
-    const auto   path      = computePath(bezier, startTime, 20);
-
+    const auto path = computePath(bezier, start.timestamp, 20);
     return std::pair{endState, path};
 }
 

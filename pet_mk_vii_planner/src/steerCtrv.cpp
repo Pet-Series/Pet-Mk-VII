@@ -52,14 +52,8 @@ std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState &start
     VehicleState endState;
     endState.pose     = ugl::lie::oplus(start.pose, velocity);
     endState.velocity = velocity[3];
-
-    /// TODO: Should start time always start from zero or be based on timestamp from
-    /// previous path?
-    const double startTime = 0.0;
-    const double endTime   = startTime + controlDuration;
-    const auto   path =
-        util::interpolatePath(VehicleState{start.pose, endState.velocity, startTime},
-                              VehicleState{endState.pose, endState.velocity, endTime}, 20);
+    endState.timestamp = start.timestamp + controlDuration;
+    const auto path    = util::interpolatePath(start, endState, 20);
 
     return std::pair{endState, path};
 }
