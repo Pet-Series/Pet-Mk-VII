@@ -62,7 +62,7 @@ template <int degree>
 Path computePath(const Bezier<degree> &bezier, double startTime, int numberOfPoints)
 {
     assert(numberOfPoints > 1);
-    std::vector<rrt::PoseStamped> path{};
+    std::vector<rrt::VehicleState> path{};
 
     const double ratioDelta = 1.0 / (numberOfPoints - 1);
     double       ratio      = 0.0;
@@ -73,7 +73,7 @@ Path computePath(const Bezier<degree> &bezier, double startTime, int numberOfPoi
         const auto forwardVelocity =
             getPlanarForwardVelocity(bezier, pose.rotation(), relativeTimestamp);
         path.push_back(
-            rrt::PoseStamped{pose, forwardVelocity, startTime + relativeTimestamp});
+            rrt::VehicleState{pose, forwardVelocity, startTime + relativeTimestamp});
         ratio += ratioDelta;
     }
     return path;
@@ -84,7 +84,7 @@ Path computePath(const Bezier<degree> &bezier, const VehicleState &startState,
                  const VehicleState &endState, double startTime, int numberOfPoints)
 {
     assert(numberOfPoints > 1);
-    std::vector<rrt::PoseStamped> path{};
+    std::vector<rrt::VehicleState> path{};
 
     const double ratioDelta = 1.0 / (numberOfPoints - 1);
     double       ratio      = 0.0;
@@ -94,7 +94,7 @@ Path computePath(const Bezier<degree> &bezier, const VehicleState &startState,
         const auto pose              = bezier.planarPose(relativeTimestamp);
         const auto velocity =
             util::interpolate(startState.velocity, endState.velocity, ratio);
-        path.push_back(rrt::PoseStamped{pose, velocity, startTime + relativeTimestamp});
+        path.push_back(rrt::VehicleState{pose, velocity, startTime + relativeTimestamp});
         ratio += ratioDelta;
     }
     return path;

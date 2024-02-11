@@ -14,8 +14,8 @@ constexpr double interpolate(double a, double b, double ratio)
     return a + ratio * (b - a);
 }
 
-std::vector<rrt::PoseStamped> interpolatePath(const rrt::PoseStamped &start,
-                                              const rrt::PoseStamped &end,
+std::vector<rrt::VehicleState> interpolatePath(const rrt::VehicleState &start,
+                                              const rrt::VehicleState &end,
                                               int                     numberOfPoints);
 
 } // namespace util

@@ -17,15 +17,9 @@ struct VehicleState
 {
     ugl::lie::Pose pose;
     double         velocity;
+    double         timestamp = 0.0;
 };
 
-struct PoseStamped
-{
-    ugl::lie::Pose pose;
-    double         velocity;
-    double         timestamp;
-};
-
-using Path = std::vector<PoseStamped>;
+using Path = std::vector<VehicleState>;
 
 } // namespace pet::rrt
