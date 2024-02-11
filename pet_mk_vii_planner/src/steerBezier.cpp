@@ -14,6 +14,8 @@ namespace pet::rrt
 namespace
 {
 
+template <typename ScalarType> constexpr int sign(ScalarType x) { return x < 0 ? -1 : 1; }
+
 template <int degree> double maxSpeed(const Bezier<degree> &curve)
 {
     static constexpr double kTimeStepSize = 0.05;
@@ -83,9 +85,28 @@ std::optional<std::pair<VehicleState, Path>>
 steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
                 const VehicleModel &vehicleModel)
 {
+    // Bezier curves cannot handle changing from forward driving to reversing in a single
+    // curve. If desired end velocity is wrong sign we set it to zero, which allows for
+    // switching direction if connected to later in the search.
+    int    drivingDirection;
+    double endVelocity;
+    if (start.velocity == 0.0)
+    {
+        drivingDirection = sign(desiredEnd.velocity);
+        endVelocity      = desiredEnd.velocity;
+    }
+    else
+    {
+        drivingDirection = sign(start.velocity);
+        endVelocity =
+            (drivingDirection == sign(desiredEnd.velocity)) ? desiredEnd.velocity : 0.0;
+    }
+
     const double       duration     = 1.0;
-    const ugl::Vector3 startTangent = start.pose.rotate(ugl::Vector3::UnitX());
-    const ugl::Vector3 endTangent   = desiredEnd.pose.rotate(ugl::Vector3::UnitX());
+    const ugl::Vector3 startTangent =
+        start.pose.rotate(ugl::Vector3::UnitX()) * drivingDirection;
+    const ugl::Vector3 endTangent =
+        desiredEnd.pose.rotate(ugl::Vector3::UnitX()) * drivingDirection;
 
     const double minRadius = 1.0 / vehicleModel.maxCurvature;
 
@@ -107,7 +128,8 @@ steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
     }
 
     /// TODO: Calculate velocity of output path.
-    const auto endState = desiredEnd;
+    auto endState     = desiredEnd;
+    endState.velocity = endVelocity;
 
     /// TODO: Should start time always start from zero or be based on timestamp from
     /// previous path?
