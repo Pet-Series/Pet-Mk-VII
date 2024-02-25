@@ -1,6 +1,7 @@
 #include "pet_mk_vii_planner/rrt.hpp"
 
 #include "pet_mk_vii_planner/rrtDefinitions.hpp"
+#include "utility/tiktok.hpp"
 
 #include <ugl/lie_group/rotation.h>
 #include <ugl/math/vector.h>
@@ -14,6 +15,7 @@ namespace pet::rrt
 std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
                                         const SearchContext &context)
 {
+    util::TikTok timer{"rrt::search"};
     for (int i = 0; i < context.maxIterations; ++i)
     {
         const auto sampledState =

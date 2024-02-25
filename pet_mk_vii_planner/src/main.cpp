@@ -6,6 +6,7 @@
 #include "pet_mk_vii_planner/rrtDefinitions.hpp"
 #include "pet_mk_vii_planner/steerBezier.hpp"
 #include "pet_mk_vii_planner/steerCtrv.hpp"
+#include "utility/tiktok.hpp"
 #include "visualization.hpp"
 
 #include <ugl/lie_group/pose.h>
@@ -88,6 +89,8 @@ void RrtSimulation::runRrt()
     // verifyVelocityContinuity(searchTree);
     verifyHeadingContinuity(searchTree);
     std::cout << "...path verification done." << std::endl;
+
+    util::TikTok::printData();
 }
 
 } // namespace pet

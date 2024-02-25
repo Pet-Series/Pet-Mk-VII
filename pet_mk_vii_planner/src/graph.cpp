@@ -1,5 +1,7 @@
 #include "pet_mk_vii_planner/graph.hpp"
 
+#include "utility/tiktok.hpp"
+
 #include <ugl/lie_group/pose.h>
 
 #include <algorithm>
@@ -31,6 +33,7 @@ const Node &Graph::getNode(int id) const { return m_nodes.at(id); }
 
 Node Graph::findClosest(const VehicleState &targetState) const
 {
+    util::TikTok timer{"Graph::findClosest"};
     /// TODO: Create overload of findClosest that takes a binary distance function.
     /// TODO: Implement some sort of tree- and/or bucket- system to improve performance.
     Node   nearestNode = m_nodes.back();

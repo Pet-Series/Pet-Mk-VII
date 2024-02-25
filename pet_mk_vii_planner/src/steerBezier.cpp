@@ -3,6 +3,7 @@
 #include "pet_mk_vii_planner/bezier.hpp"
 #include "pet_mk_vii_planner/rrtDefinitions.hpp"
 #include "utility/interpolation.hpp"
+#include "utility/tiktok.hpp"
 
 #include <ugl/math/vector.h>
 
@@ -107,6 +108,7 @@ std::optional<std::pair<VehicleState, Path>>
 steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
                 const VehicleModel &vehicleModel)
 {
+    util::TikTok timer{"rrt::steerBezierPath"};
     // Bezier curves cannot handle changing from forward driving to reversing in a single
     // curve. If desired end velocity is wrong sign we set it to zero, which allows for
     // switching direction if connected to later in the search.
