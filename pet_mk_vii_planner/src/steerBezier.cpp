@@ -34,20 +34,19 @@ template <int degree> double maxSpeed(const Bezier<degree> &curve)
     return maxSpeed;
 }
 
-template <int degree> double maxCurvature(const Bezier<degree> &curve)
+template <int degree>
+bool isCurvatureHigherThan(const Bezier<degree> &curve, double maxCurvature)
 {
     static constexpr double kTimeStepSize = 0.05;
-
-    double maxCurvature = -std::numeric_limits<double>::infinity();
     for (double t = 0.0; t <= curve.duration(); t += kTimeStepSize)
     {
         const double curvature = std::abs(curve.planarCurvature(t));
         if (curvature > maxCurvature)
         {
-            maxCurvature = curvature;
+            return true;
         }
     }
-    return maxCurvature;
+    return false;
 }
 
 template <int degree>
@@ -140,7 +139,7 @@ steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
     const ugl::Vector3 p3 = desiredEnd.pose.position();
     const CubicBezier bezier{duration, {p0, p1, p2, p3}};
 
-    if (maxCurvature(bezier) > vehicleModel.maxCurvature)
+    if (isCurvatureHigherThan(bezier, vehicleModel.maxCurvature))
     {
         return {};
     }
@@ -174,7 +173,7 @@ steerBezierKinematic(const VehicleState &start, const VehicleState &desiredEnd,
     {
         return {};
     }
-    if (maxCurvature(bezier) > vehicleModel.maxCurvature)
+    if (isCurvatureHigherThan(bezier, vehicleModel.maxCurvature))
     {
         return {};
     }
