@@ -36,12 +36,15 @@ Node Graph::findClosest(const VehicleState &targetState) const
     util::TikTok timer{"Graph::findClosest"};
     /// TODO: Create overload of findClosest that takes a binary distance function.
     /// TODO: Implement some sort of tree- and/or bucket- system to improve performance.
+    auto distanceFunc = [](const VehicleState &a, const VehicleState &b) -> double {
+        return ugl::lie::ominus(a.pose, b.pose).squaredNorm();
+    };
+
     Node   nearestNode = m_nodes.back();
     double minDistance = std::numeric_limits<double>::infinity();
     for (const auto &node : m_nodes)
     {
-        const double distance =
-            ugl::lie::ominus(node.state.pose, targetState.pose).squaredNorm();
+        const double distance = distanceFunc(node.state, targetState);
         if (distance < minDistance)
         {
             minDistance = distance;
