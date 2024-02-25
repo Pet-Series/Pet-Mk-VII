@@ -47,8 +47,8 @@ void RrtSimulation::runRrt()
     }();
 
     const rrt::VehicleState startState{ugl::lie::Pose::Identity(), 0.0};
-    // const ugl::lie::Pose    goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};
-    const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(), {4.0, 1.0, 0.0}};
+    const ugl::lie::Pose    goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};
+    // const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(), {4.0, 1.0, 0.0}};
 
     rrt::Graph      searchTree{startState, searchContext.searchSpace};
     const rrt::Goal goal{goalPose};
@@ -57,7 +57,7 @@ void RrtSimulation::runRrt()
     std::optional<std::vector<rrt::Node>> path{};
 
     std::cout << "Starting search..." << std::endl;
-    for (int i = 0; i < 1000; ++i)
+    for (int i = 0; i < 5000; ++i)
     {
         if (!rclcpp::ok())
         {

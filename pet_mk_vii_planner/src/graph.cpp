@@ -53,22 +53,56 @@ Node Graph::findClosest(const VehicleState &targetState) const
 {
     util::TikTok timer{"Graph::findClosest"};
     /// TODO: Create overload of findClosest that takes a binary distance function.
-    /// TODO: Implement some sort of tree- and/or bucket- system to improve performance.
     auto distanceFunc = [](const VehicleState &a, const VehicleState &b) -> double {
         return ugl::lie::ominus(a.pose, b.pose).squaredNorm();
     };
 
+    const double localX = targetState.pose.position().x() - m_boundingBox.min.x();
+    const double localY = targetState.pose.position().y() - m_boundingBox.min.y();
+    const int    indexX = static_cast<int>(std::floor(localX / kBucketSize));
+    const int    indexY = static_cast<int>(std::floor(localY / kBucketSize));
+
     Node   nearestNode;
     double minDistance = std::numeric_limits<double>::infinity();
-    for (const auto &bucket : m_buckets)
+
+    for (const int ix : {indexX - 1, indexX, indexX + 1})
     {
-        for (const auto &node : bucket)
+        if (ix < 0 || ix >= m_numSidesX)
         {
-            const double distance = distanceFunc(node.state, targetState);
-            if (distance < minDistance)
+            continue;
+        }
+        for (const int iy : {indexY - 1, indexY, indexY + 1})
+        {
+            if (iy < 0 || iy >= m_numSidesY)
             {
-                minDistance = distance;
-                nearestNode = node;
+                continue;
+            }
+            const auto &bucket = m_buckets[ix + m_numSidesX * iy];
+            for (const auto &node : bucket)
+            {
+                const double distance = distanceFunc(node.state, targetState);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestNode = node;
+                }
+            }
+        }
+    }
+
+    // No nodes found in neighbouring buckets. Fall back on naive serch of complete tree.
+    if (minDistance == std::numeric_limits<double>::infinity())
+    {
+        for (const auto &bucket : m_buckets)
+        {
+            for (const auto &node : bucket)
+            {
+                const double distance = distanceFunc(node.state, targetState);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestNode = node;
+                }
             }
         }
     }
