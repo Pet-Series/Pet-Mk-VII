@@ -22,4 +22,10 @@ struct VehicleState
 
 using Path = std::vector<VehicleState>;
 
+struct BoundingBox
+{
+    ugl::Vector<2> min;
+    ugl::Vector<2> max;
+};
+
 } // namespace pet::rrt

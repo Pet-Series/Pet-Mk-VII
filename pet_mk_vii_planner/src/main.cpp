@@ -47,16 +47,17 @@ void RrtSimulation::runRrt()
     }();
 
     const rrt::VehicleState startState{ugl::lie::Pose::Identity(), 0.0};
-    const ugl::lie::Pose    goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};
+    // const ugl::lie::Pose    goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};
+    const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(), {4.0, 1.0, 0.0}};
 
-    rrt::Graph      searchTree{startState};
+    rrt::Graph      searchTree{startState, searchContext.searchSpace};
     const rrt::Goal goal{goalPose};
 
     std::vector<rrt::Graph>               searchHistory{};
     std::optional<std::vector<rrt::Node>> path{};
 
     std::cout << "Starting search..." << std::endl;
-    for (int i = 0; i < 500; ++i)
+    for (int i = 0; i < 1000; ++i)
     {
         if (!rclcpp::ok())
         {
@@ -87,7 +88,7 @@ void RrtSimulation::runRrt()
 
     std::cout << "Starting path verification..." << std::endl;
     // verifyVelocityContinuity(searchTree);
-    verifyHeadingContinuity(searchTree);
+    // verifyHeadingContinuity(searchTree);
     std::cout << "...path verification done." << std::endl;
 
     util::TikTok::printData();

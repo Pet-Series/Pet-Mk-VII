@@ -8,11 +8,17 @@
 namespace pet::rrt
 {
 
+struct NodeId
+{
+    int bucketIndex;
+    int internalIndex;
+};
+
 struct Node
 {
-    int              id;
-    int              parentId;
-    std::vector<int> childrenIds;
+    NodeId              id;
+    NodeId              parentId;
+    std::vector<NodeId> childrenIds;
 
     VehicleState state;
     Path         pathFromParent;
@@ -23,12 +29,13 @@ struct Node
 class Graph
 {
   public:
-    Graph(const VehicleState &startingState);
+    Graph(const VehicleState &startingState, const BoundingBox &boundingBox);
 
     const Node &addNode(const VehicleState &state, const Path &pathFromParent,
                         const Node &parent);
 
-    const Node &getNode(int id) const;
+    Node       &getNode(const NodeId &id);
+    const Node &getNode(const NodeId &id) const;
 
     Node findClosest(const VehicleState &targetState) const;
 
@@ -39,8 +46,16 @@ class Graph
   private:
     const Node &storeNode(const Node &node);
 
+    int findBucketIndex(const Node &node) const;
+
   private:
-    std::vector<Node> m_nodes;
+    std::vector<std::vector<Node>> m_buckets;
+
+    BoundingBox m_boundingBox;
+    int         m_numSidesX;
+    int         m_numSidesY;
+
+    static constexpr double kBucketSize = 1.0;
 };
 
 bool isRoot(const Node &node);
