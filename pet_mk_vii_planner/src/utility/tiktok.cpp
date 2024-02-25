@@ -18,6 +18,7 @@ void TikTok::printData()
         const auto meanTime = std::chrono::duration_cast<std::chrono::microseconds>(
             data.totalCallTime / data.callCount);
 
+        std::cout << std::endl;
         std::cout << "Name: \"" << name << '\"' << std::endl;
         std::cout << "  Count          : " << data.callCount << std::endl;
         std::cout << "  Mean Time [us] : " << meanTime.count() << std::endl;
