@@ -37,8 +37,20 @@ template <int degree> double maxSpeed(const Bezier<degree> &curve)
 template <int degree>
 bool isCurvatureHigherThan(const Bezier<degree> &curve, double maxCurvature)
 {
+    // Start and end often have the highest curvature.
+    const double startCurvature = std::abs(curve.planarCurvature(0.0));
+    if (startCurvature > maxCurvature)
+    {
+        return true;
+    }
+    const double endCurvature = std::abs(curve.planarCurvature(curve.duration()));
+    if (endCurvature > maxCurvature)
+    {
+        return true;
+    }
+
     static constexpr double kTimeStepSize = 0.05;
-    for (double t = 0.0; t <= curve.duration(); t += kTimeStepSize)
+    for (double t = kTimeStepSize; t < curve.duration(); t += kTimeStepSize)
     {
         const double curvature = std::abs(curve.planarCurvature(t));
         if (curvature > maxCurvature)
