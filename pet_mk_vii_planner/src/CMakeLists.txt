@@ -43,7 +43,7 @@ target_include_directories(rrt_simulation
 target_sources(rrt_simulation
   PRIVATE
     ${PROJECT_SOURCE_DIR}/src/main.cpp
-    ${PROJECT_SOURCE_DIR}/src/visualization.cpp
+    ${PROJECT_SOURCE_DIR}/src/rviz_visualizer.cpp
 )
 
 target_link_libraries(rrt_simulation

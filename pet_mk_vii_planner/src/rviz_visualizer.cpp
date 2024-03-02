@@ -1,4 +1,4 @@
-#include "visualization.hpp"
+#include "rviz_visualizer.hpp"
 
 #include "pet_mk_vii_planner/graph.hpp"
 #include "utility/algorithm.hpp"
