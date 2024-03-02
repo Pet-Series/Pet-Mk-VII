@@ -27,8 +27,26 @@ struct SearchContext
     SteerFunction steerFunction;
 };
 
-std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
-                                        const SearchContext &context);
+struct SearchDiagnostics
+{
+    int totalIterations  = 0;
+    int totalConnections = 0;
+
+    SearchDiagnostics &operator+=(const SearchDiagnostics &other)
+    {
+        totalIterations += other.totalIterations;
+        totalConnections += other.totalConnections;
+        return *this;
+    }
+};
+
+struct SearchResult
+{
+    std::optional<std::vector<Node>> path{};
+    SearchDiagnostics                diag{};
+};
+
+SearchResult search(const Goal &goal, Graph &tree, const SearchContext &context);
 
 VehicleState sampleState(const Goal &goal, const VehicleModel &vehicleModel,
                          const BoundingBox &searchSpace);

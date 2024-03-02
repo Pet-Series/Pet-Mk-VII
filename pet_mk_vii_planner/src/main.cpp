@@ -22,6 +22,14 @@
 namespace pet
 {
 
+void printSearchInfo(const rrt::SearchDiagnostics &diag)
+{
+    std::cout << std::endl;
+    std::cout << "Search diagnostics:" << std::endl;
+    std::cout << "  Connections: " << diag.totalConnections << "/" << diag.totalIterations
+              << std::endl;
+}
+
 class RrtSimulation : public rclcpp::Node
 {
   public:
@@ -56,6 +64,8 @@ void RrtSimulation::runRrt()
     std::vector<rrt::Graph>               searchHistory{};
     std::optional<std::vector<rrt::Node>> path{};
 
+    rrt::SearchDiagnostics aggregatedDiag{};
+
     std::cout << "Starting search..." << std::endl;
     for (int i = 0; i < 5000; ++i)
     {
@@ -64,12 +74,14 @@ void RrtSimulation::runRrt()
             break; // e.g. ctrl-C by user
         }
 
-        path = rrt::search(goal, searchTree, searchContext);
+        const auto result = rrt::search(goal, searchTree, searchContext);
+        aggregatedDiag += result.diag;
 
         searchHistory.push_back(searchTree);
 
-        if (path.has_value())
+        if (result.path.has_value())
         {
+            path = result.path;
             std::cout << "Goal found!" << std::endl;
             break;
         }
@@ -90,6 +102,8 @@ void RrtSimulation::runRrt()
     // verifyVelocityContinuity(searchTree);
     // verifyHeadingContinuity(searchTree);
     std::cout << "...path verification done." << std::endl;
+
+    printSearchInfo(aggregatedDiag);
 
     util::TikTok::printData();
 }

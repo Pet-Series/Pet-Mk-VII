@@ -12,12 +12,13 @@
 namespace pet::rrt
 {
 
-std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
-                                        const SearchContext &context)
+SearchResult search(const Goal &goal, Graph &tree, const SearchContext &context)
 {
     util::TikTok timer{"rrt::search"};
+    SearchDiagnostics diag{};
     for (int i = 0; i < context.maxIterations; ++i)
     {
+        ++diag.totalIterations;
         const auto sampledState =
             sampleState(goal, context.vehicleModel, context.searchSpace);
 
@@ -28,16 +29,17 @@ std::optional<std::vector<Node>> search(const Goal &goal, Graph &tree,
             context.steerFunction(parentNode.state, sampledState, context.vehicleModel);
         if (result.has_value())
         {
+            ++diag.totalConnections;
             const auto [reachedState, pathFromParent] = result.value();
             const Node &newNode = tree.addNode(reachedState, pathFromParent, parentNode);
             if (goal.isReached(reachedState))
             {
-                return tree.getPathFromRoot(newNode);
+                return SearchResult{tree.getPathFromRoot(newNode), diag};
             }
         }
     }
 
-    return {};
+    return SearchResult{{}, diag};
 }
 
 VehicleState sampleState(const Goal &goal, const VehicleModel &vehicleModel,
