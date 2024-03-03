@@ -40,6 +40,9 @@ if(BUILD_TESTING)
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+
+  include(${PROJECT_SOURCE_DIR}/cmake/matplotplusplus.cmake)
+  add_subdirectory(test)
 endif()
 
 ament_package()
