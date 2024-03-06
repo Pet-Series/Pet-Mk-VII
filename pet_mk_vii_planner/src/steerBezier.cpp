@@ -145,26 +145,40 @@ steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
 
     const double minRadius = 1.0 / vehicleModel.maxCurvature;
 
-    const ugl::Vector3 p0 = start.pose.position();
-    const ugl::Vector3 p1 = start.pose.position() + startTangent * minRadius;
-    const ugl::Vector3 p2 = desiredEnd.pose.position() - endTangent * minRadius;
-    const ugl::Vector3 p3 = desiredEnd.pose.position();
-    const CubicBezier bezier{duration, {p0, p1, p2, p3}};
+    std::optional<CubicBezier> bezier{};
+    for (const double scaleFactor : {0.2, 0.5, 1.0, 2.0})
+    {
+        const double tangentFactor = scaleFactor * minRadius;
 
-    if (isCurvatureHigherThan(bezier, vehicleModel.maxCurvature))
+        const ugl::Vector3 p0 = start.pose.position();
+        const ugl::Vector3 p1 = start.pose.position() + startTangent * tangentFactor;
+        const ugl::Vector3 p2 = desiredEnd.pose.position() - endTangent * tangentFactor;
+        const ugl::Vector3 p3 = desiredEnd.pose.position();
+        const CubicBezier  candidate{duration, {p0, p1, p2, p3}};
+
+        if (!isCurvatureHigherThan(candidate, vehicleModel.maxCurvature))
+        {
+            bezier = candidate;
+            break;
+        }
+    }
+
+    if (bezier.has_value())
+    {
+        /// TODO: Set velocity profile and timestamps based on max acceleration/braking
+        /// and boundary velocities.
+        VehicleState endState{};
+        endState.pose      = desiredEnd.pose;
+        endState.velocity  = endVelocity;
+        endState.timestamp = start.timestamp + duration;
+
+        const auto path = computePath(bezier.value(), start, endState, 10);
+        return std::pair{endState, path};
+    }
+    else
     {
         return {};
     }
-
-    /// TODO: Set velocity profile and timestamps based on max acceleration/braking and
-    /// boundary velocities.
-    VehicleState endState{};
-    endState.pose      = desiredEnd.pose;
-    endState.velocity  = endVelocity;
-    endState.timestamp = start.timestamp + duration;
-
-    const auto path = computePath(bezier, start, endState, 10);
-    return std::pair{endState, path};
 }
 
 std::optional<std::pair<VehicleState, Path>>
