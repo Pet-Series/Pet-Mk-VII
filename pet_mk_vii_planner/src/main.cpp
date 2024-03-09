@@ -59,11 +59,12 @@ void RrtSimulation::runRrt()
     // const ugl::Vector3 goalPosition{4.0, -1.0, 0.0};
     // const ugl::Vector3 goalPosition{4.0, 1.0, 0.0};
     // const ugl::Vector3 goalPosition{-4.0, 1.0, 0.0};
-    const ugl::Vector3 goalPosition{0.0, 4.0, 0.0};
-    // const ugl::Vector3 goalPosition{2.0, 4.0, 0.0};
+    // const ugl::Vector3 goalPosition{0.0, 4.0, 0.0};
+    const ugl::Vector3 goalPosition{2.0, 4.0, 0.0};
 
     // const double goalHeading = 0.0;
-    const double goalHeading = M_PI;
+    // const double goalHeading = M_PI;
+    const double goalHeading = -M_PI / 2;
 
     const ugl::UnitQuaternion goalOrientation{
         Eigen::AngleAxisd{goalHeading, ugl::Vector3::UnitZ()}};
