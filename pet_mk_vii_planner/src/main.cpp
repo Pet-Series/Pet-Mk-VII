@@ -45,7 +45,7 @@ void RrtSimulation::runRrt()
 {
     const rrt::SearchContext searchContext = [] {
         rrt::SearchContext context{};
-        context.maxIterations    = 10;
+        context.maxIterations    = 100;
         context.vehicleModel     = rrt::VehicleModel{};
         context.vehicleFootprint = rrt::VehicleFootprint{{-0.02, 0.05}, {0.18, 0.05}};
         context.searchSpace      = rrt::BoundingBox{{-5.0, -5.0}, {5.0, 5.0}};
@@ -55,8 +55,19 @@ void RrtSimulation::runRrt()
     }();
 
     const rrt::VehicleState startState{ugl::lie::Pose::Identity(), 0.0};
-    const ugl::lie::Pose    goalPose{ugl::lie::Rotation::Identity(), {4.0, -1.0, 0.0}};
-    // const ugl::lie::Pose goalPose{ugl::lie::Rotation::Identity(), {4.0, 1.0, 0.0}};
+
+    // const ugl::Vector3 goalPosition{4.0, -1.0, 0.0};
+    // const ugl::Vector3 goalPosition{4.0, 1.0, 0.0};
+    // const ugl::Vector3 goalPosition{-4.0, 1.0, 0.0};
+    const ugl::Vector3 goalPosition{0.0, 4.0, 0.0};
+    // const ugl::Vector3 goalPosition{2.0, 4.0, 0.0};
+
+    // const double goalHeading = 0.0;
+    const double goalHeading = M_PI;
+
+    const ugl::UnitQuaternion goalOrientation{
+        Eigen::AngleAxisd{goalHeading, ugl::Vector3::UnitZ()}};
+    const ugl::lie::Pose goalPose{goalOrientation, goalPosition};
 
     rrt::Graph      searchTree{startState, searchContext.searchSpace};
     const rrt::Goal goal{goalPose};
@@ -67,7 +78,7 @@ void RrtSimulation::runRrt()
     rrt::SearchDiagnostics aggregatedDiag{};
 
     std::cout << "Starting search..." << std::endl;
-    for (int i = 0; i < 5000; ++i)
+    for (int i = 0; i < 500; ++i)
     {
         if (!rclcpp::ok())
         {
