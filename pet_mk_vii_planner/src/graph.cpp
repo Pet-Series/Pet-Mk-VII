@@ -157,7 +157,7 @@ Node Graph::sampleClose(const VehicleState &targetState) const
     const int    indexX = static_cast<int>(std::floor(localX / kBucketSize));
     const int    indexY = static_cast<int>(std::floor(localY / kBucketSize));
 
-    const std::array bucketOffset = {-1, 0, 1};
+    const std::array bucketOffset = {-2, -1, 0, 1, 2};
 
     std::size_t totalPotentialNodes = 0;
     for (const int offsetX : bucketOffset)
