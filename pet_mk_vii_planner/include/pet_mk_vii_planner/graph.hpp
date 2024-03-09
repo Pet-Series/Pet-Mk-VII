@@ -39,6 +39,8 @@ class Graph
 
     Node findClosest(const VehicleState &targetState) const;
 
+    Node sampleClose(const VehicleState &targetState) const;
+
     std::vector<Node> getPathFromRoot(const Node &node) const;
 
     void forEachNode(const std::function<void(const Node &)> &function) const;

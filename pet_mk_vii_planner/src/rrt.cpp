@@ -22,7 +22,8 @@ SearchResult search(const Goal &goal, Graph &tree, const SearchContext &context)
         const auto sampledState =
             sampleState(goal, context.vehicleModel, context.searchSpace);
 
-        const Node &parentNode = tree.findClosest(sampledState);
+        // const Node &parentNode = tree.findClosest(sampledState);
+        const Node &parentNode = tree.sampleClose(sampledState);
 
         /// TODO: Perform collision check against map.
         const auto result =

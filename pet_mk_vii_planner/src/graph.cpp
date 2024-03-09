@@ -1,8 +1,11 @@
 #include "pet_mk_vii_planner/graph.hpp"
 
+#include "utility/algorithm.hpp"
+
 #include "utility/tiktok.hpp"
 
 #include <ugl/lie_group/pose.h>
+#include <ugl/random/uniform_distribution.h>
 
 #include <algorithm>
 #include <cassert>
@@ -124,6 +127,7 @@ Node Graph::findClosest(const VehicleState &targetState) const
     // No nodes found in neighbouring buckets. Fall back on naive serch of complete tree.
     if (minDistance == std::numeric_limits<double>::infinity())
     {
+        /// TODO: Implement using Graph::forEachNode().
         for (const auto &bucket : m_buckets)
         {
             for (const auto &node : bucket)
@@ -138,6 +142,89 @@ Node Graph::findClosest(const VehicleState &targetState) const
         }
     }
     return nearestNode;
+}
+
+Node Graph::sampleClose(const VehicleState &targetState) const
+{
+    util::TikTok timer{"Graph::sampleClose"};
+
+    const double localX = targetState.pose.position().x() - m_boundingBox.min.x();
+    const double localY = targetState.pose.position().y() - m_boundingBox.min.y();
+    const int    indexX = static_cast<int>(std::floor(localX / kBucketSize));
+    const int    indexY = static_cast<int>(std::floor(localY / kBucketSize));
+
+    std::size_t totalPotentialNodes = 0;
+    for (const int ix : {indexX - 1, indexX, indexX + 1})
+    {
+        if (ix < 0 || ix >= m_numSidesX)
+        {
+            continue;
+        }
+        for (const int iy : {indexY - 1, indexY, indexY + 1})
+        {
+            if (iy < 0 || iy >= m_numSidesY)
+            {
+                continue;
+            }
+            const auto &bucket = m_buckets[ix + m_numSidesX * iy];
+            totalPotentialNodes += bucket.size();
+        }
+    }
+
+    if (totalPotentialNodes != 0)
+    {
+        std::size_t sampledIndex =
+            static_cast<int>(std::floor(ugl::random::UniformDistribution<1>::sample(
+                0.0, static_cast<double>(totalPotentialNodes))));
+        for (const int ix : {indexX - 1, indexX, indexX + 1})
+        {
+            if (ix < 0 || ix >= m_numSidesX)
+            {
+                continue;
+            }
+            for (const int iy : {indexY - 1, indexY, indexY + 1})
+            {
+                if (iy < 0 || iy >= m_numSidesY)
+                {
+                    continue;
+                }
+
+                const auto &bucket = m_buckets[ix + m_numSidesX * iy];
+                if (sampledIndex < bucket.size())
+                {
+                    return bucket[sampledIndex];
+                }
+                else
+                {
+                    sampledIndex -= bucket.size();
+                }
+            }
+        }
+    }
+    else // Fall back on sampling from full graph.
+    {
+        std::size_t totalPotentialNodes = 0;
+        for (const auto &bucket : m_buckets)
+        {
+            totalPotentialNodes += bucket.size();
+        }
+
+        std::size_t sampledIndex =
+            static_cast<int>(std::floor(ugl::random::UniformDistribution<1>::sample(
+                0.0, static_cast<double>(totalPotentialNodes))));
+        for (const auto &bucket : m_buckets)
+        {
+            if (sampledIndex < bucket.size())
+            {
+                return bucket[sampledIndex];
+            }
+            else
+            {
+                sampledIndex -= bucket.size();
+            }
+        }
+    }
+    // Unreachable
 }
 
 std::vector<Node> Graph::getPathFromRoot(const Node &node) const
