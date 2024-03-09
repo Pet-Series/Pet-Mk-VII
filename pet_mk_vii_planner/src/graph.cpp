@@ -179,6 +179,7 @@ Node Graph::sampleClose(const VehicleState &targetState) const
         totalPotentialNodes += bucket.size();
     }
 
+    Node sampledNode;
     if (totalPotentialNodes != 0)
     {
         std::size_t sampledIndex =
@@ -189,7 +190,8 @@ Node Graph::sampleClose(const VehicleState &targetState) const
             const auto &bucket = m_buckets[bucketIndex];
             if (sampledIndex < bucket.size())
             {
-                return bucket[sampledIndex];
+                sampledNode = bucket[sampledIndex];
+                break;
             }
             else
             {
@@ -212,7 +214,8 @@ Node Graph::sampleClose(const VehicleState &targetState) const
         {
             if (sampledIndex < bucket.size())
             {
-                return bucket[sampledIndex];
+                sampledNode = bucket[sampledIndex];
+                break;
             }
             else
             {
@@ -220,7 +223,8 @@ Node Graph::sampleClose(const VehicleState &targetState) const
             }
         }
     }
-    // Unreachable
+
+    return sampledNode;
 }
 
 std::vector<Node> Graph::getPathFromRoot(const Node &node) const
