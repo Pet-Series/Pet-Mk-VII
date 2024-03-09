@@ -96,17 +96,21 @@ Node Graph::findClosest(const VehicleState &targetState) const
     const int    indexX = static_cast<int>(std::floor(localX / kBucketSize));
     const int    indexY = static_cast<int>(std::floor(localY / kBucketSize));
 
+    const std::array bucketOffset = {-1, 0, 1};
+
     Node   nearestNode;
     double minDistance = std::numeric_limits<double>::infinity();
 
-    for (const int ix : {indexX - 1, indexX, indexX + 1})
+    for (const int offsetX : bucketOffset)
     {
+        const int ix = indexX + offsetX;
         if (ix < 0 || ix >= m_numSidesX)
         {
             continue;
         }
-        for (const int iy : {indexY - 1, indexY, indexY + 1})
+        for (const int offsetY : bucketOffset)
         {
+            const int iy = indexY + offsetY;
             if (iy < 0 || iy >= m_numSidesY)
             {
                 continue;
@@ -153,15 +157,19 @@ Node Graph::sampleClose(const VehicleState &targetState) const
     const int    indexX = static_cast<int>(std::floor(localX / kBucketSize));
     const int    indexY = static_cast<int>(std::floor(localY / kBucketSize));
 
+    const std::array bucketOffset = {-1, 0, 1};
+
     std::size_t totalPotentialNodes = 0;
-    for (const int ix : {indexX - 1, indexX, indexX + 1})
+    for (const int offsetX : bucketOffset)
     {
+        const int ix = indexX + offsetX;
         if (ix < 0 || ix >= m_numSidesX)
         {
             continue;
         }
-        for (const int iy : {indexY - 1, indexY, indexY + 1})
+        for (const int offsetY : bucketOffset)
         {
+            const int iy = indexY + offsetY;
             if (iy < 0 || iy >= m_numSidesY)
             {
                 continue;
@@ -176,14 +184,16 @@ Node Graph::sampleClose(const VehicleState &targetState) const
         std::size_t sampledIndex =
             static_cast<int>(std::floor(ugl::random::UniformDistribution<1>::sample(
                 0.0, static_cast<double>(totalPotentialNodes))));
-        for (const int ix : {indexX - 1, indexX, indexX + 1})
+        for (const int offsetX : bucketOffset)
         {
+            const int ix = indexX + offsetX;
             if (ix < 0 || ix >= m_numSidesX)
             {
                 continue;
             }
-            for (const int iy : {indexY - 1, indexY, indexY + 1})
+            for (const int offsetY : bucketOffset)
             {
+                const int iy = indexY + offsetY;
                 if (iy < 0 || iy >= m_numSidesY)
                 {
                     continue;
