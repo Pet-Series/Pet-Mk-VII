@@ -15,24 +15,6 @@
 
 namespace pet::rrt
 {
-namespace
-{
-
-template <typename ScalarType> constexpr int sign(ScalarType x) { return x < 0 ? -1 : 1; }
-
-int getDrivingDirection(const VehicleState &start, const VehicleState &end)
-{
-    if (start.velocity == 0.0)
-    {
-        return sign(end.velocity);
-    }
-    else
-    {
-        return sign(start.velocity);
-    }
-}
-
-} // namespace
 
 Graph::Graph(const VehicleState &startingState, const BoundingBox &boundingBox)
     : m_boundingBox(boundingBox)
@@ -75,21 +57,8 @@ Node Graph::findClosest(const VehicleState &targetState) const
 {
     util::TikTok timer{"Graph::findClosest"};
     /// TODO: Create overload of findClosest that takes a binary distance function.
-    // auto distanceFunc = [](const VehicleState &a, const VehicleState &b) -> double {
-    //     return ugl::lie::ominus(a.pose, b.pose).squaredNorm();
-    // };
-    auto distanceFunc = [](const VehicleState &start, const VehicleState &end) -> double {
-        const int          drivingDirection = getDrivingDirection(start, end);
-        const double       maxCurvature     = 2.0; // TODO: Use vehicle model
-        const double       minRadius        = 1.0 / maxCurvature;
-        const double       tangentialOffset = 2 * minRadius;
-        const ugl::Vector3 endTangent =
-            ugl::Vector3::UnitX() * -drivingDirection * tangentialOffset;
-
-        const ugl::lie::Pose desiredStartPose =
-            end.pose * ugl::lie::Pose{ugl::lie::Rotation::Identity(), endTangent};
-
-        return ugl::lie::ominus(start.pose, desiredStartPose).squaredNorm();
+    auto distanceFunc = [](const VehicleState &a, const VehicleState &b) -> double {
+        return ugl::lie::ominus(a.pose, b.pose).squaredNorm();
     };
 
     const auto [indexX, indexY] = findBucketIndexPair(targetState);
