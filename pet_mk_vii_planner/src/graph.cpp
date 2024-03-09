@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
+#include <numeric>
 
 namespace pet::rrt
 {
@@ -153,7 +154,7 @@ Node Graph::sampleClose(const VehicleState &targetState) const
 
     const std::array bucketOffset = {-2, -1, 0, 1, 2};
 
-    std::vector<int> candidateBucketsIndices{};
+    std::vector<std::size_t> candidateBucketsIndices{};
     for (const int offsetX : bucketOffset)
     {
         const int ix = indexX + offsetX;
@@ -172,59 +173,16 @@ Node Graph::sampleClose(const VehicleState &targetState) const
         }
     }
 
-    std::size_t totalPotentialNodes = 0;
-    for (const auto &bucketIndex : candidateBucketsIndices)
+    const auto sampledNode = sampleFromBuckets(candidateBucketsIndices);
+    if (sampledNode.has_value())
     {
-        const auto &bucket = m_buckets[bucketIndex];
-        totalPotentialNodes += bucket.size();
+        return sampledNode.value();
     }
 
-    Node sampledNode;
-    if (totalPotentialNodes != 0)
-    {
-        std::size_t sampledIndex =
-            static_cast<int>(std::floor(ugl::random::UniformDistribution<1>::sample(
-                0.0, static_cast<double>(totalPotentialNodes))));
-        for (const auto &bucketIndex : candidateBucketsIndices)
-        {
-            const auto &bucket = m_buckets[bucketIndex];
-            if (sampledIndex < bucket.size())
-            {
-                sampledNode = bucket[sampledIndex];
-                break;
-            }
-            else
-            {
-                sampledIndex -= bucket.size();
-            }
-        }
-    }
-    else // Fall back on sampling from full graph.
-    {
-        std::size_t totalPotentialNodes = 0;
-        for (const auto &bucket : m_buckets)
-        {
-            totalPotentialNodes += bucket.size();
-        }
-
-        std::size_t sampledIndex =
-            static_cast<int>(std::floor(ugl::random::UniformDistribution<1>::sample(
-                0.0, static_cast<double>(totalPotentialNodes))));
-        for (const auto &bucket : m_buckets)
-        {
-            if (sampledIndex < bucket.size())
-            {
-                sampledNode = bucket[sampledIndex];
-                break;
-            }
-            else
-            {
-                sampledIndex -= bucket.size();
-            }
-        }
-    }
-
-    return sampledNode;
+    // Fall back on sampling from full graph.
+    candidateBucketsIndices = std::vector<std::size_t>(m_buckets.size());
+    std::iota(candidateBucketsIndices.begin(), candidateBucketsIndices.end(), 0);
+    return sampleFromBuckets(candidateBucketsIndices).value();
 }
 
 std::vector<Node> Graph::getPathFromRoot(const Node &node) const
@@ -274,6 +232,41 @@ std::pair<int, int> Graph::findBucketIndexPair(const VehicleState &state) const
     const int    indexY = static_cast<int>(std::floor(localY / kBucketSize));
 
     return {indexX, indexY};
+}
+
+std::optional<Node>
+Graph::sampleFromBuckets(const std::vector<std::size_t> &bucketIndices) const
+{
+    std::size_t totalPotentialNodes = 0;
+    for (const auto &bucketIndex : bucketIndices)
+    {
+        const auto &bucket = m_buckets[bucketIndex];
+        totalPotentialNodes += bucket.size();
+    }
+
+    std::optional<Node> sampledNode;
+    if (totalPotentialNodes == 0)
+    {
+        return sampledNode;
+    }
+
+    std::size_t sampledIndex =
+        static_cast<int>(std::floor(ugl::random::UniformDistribution<1>::sample(
+            0.0, static_cast<double>(totalPotentialNodes))));
+    for (const auto &bucketIndex : bucketIndices)
+    {
+        const auto &bucket = m_buckets[bucketIndex];
+        if (sampledIndex < bucket.size())
+        {
+            sampledNode = bucket[sampledIndex];
+            break;
+        }
+        else
+        {
+            sampledIndex -= bucket.size();
+        }
+    }
+    return sampledNode;
 }
 
 void Graph::forEachNode(const std::function<void(const Node &)> &function) const

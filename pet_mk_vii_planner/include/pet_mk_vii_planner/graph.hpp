@@ -3,6 +3,7 @@
 #include "pet_mk_vii_planner/rrtDefinitions.hpp"
 
 #include <functional>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -54,6 +55,9 @@ class Graph
 
     /// @brief Get pair of 2D bucket indices from state.
     std::pair<int, int> findBucketIndexPair(const VehicleState &state) const;
+
+    std::optional<Node>
+    sampleFromBuckets(const std::vector<std::size_t> &bucketIndices) const;
 
   private:
     std::vector<std::vector<Node>> m_buckets;
