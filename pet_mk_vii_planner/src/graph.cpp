@@ -159,7 +159,7 @@ Node Graph::sampleClose(const VehicleState &targetState) const
 
     const std::array bucketOffset = {-2, -1, 0, 1, 2};
 
-    std::size_t totalPotentialNodes = 0;
+    std::vector<int> candidateBucketsIndices{};
     for (const int offsetX : bucketOffset)
     {
         const int ix = indexX + offsetX;
@@ -174,9 +174,15 @@ Node Graph::sampleClose(const VehicleState &targetState) const
             {
                 continue;
             }
-            const auto &bucket = m_buckets[ix + m_numSidesX * iy];
-            totalPotentialNodes += bucket.size();
+            candidateBucketsIndices.push_back(ix + m_numSidesX * iy);
         }
+    }
+
+    std::size_t totalPotentialNodes = 0;
+    for (const auto &bucketIndex : candidateBucketsIndices)
+    {
+        const auto &bucket = m_buckets[bucketIndex];
+        totalPotentialNodes += bucket.size();
     }
 
     if (totalPotentialNodes != 0)
@@ -184,30 +190,16 @@ Node Graph::sampleClose(const VehicleState &targetState) const
         std::size_t sampledIndex =
             static_cast<int>(std::floor(ugl::random::UniformDistribution<1>::sample(
                 0.0, static_cast<double>(totalPotentialNodes))));
-        for (const int offsetX : bucketOffset)
+        for (const auto &bucketIndex : candidateBucketsIndices)
         {
-            const int ix = indexX + offsetX;
-            if (ix < 0 || ix >= m_numSidesX)
+            const auto &bucket = m_buckets[bucketIndex];
+            if (sampledIndex < bucket.size())
             {
-                continue;
+                return bucket[sampledIndex];
             }
-            for (const int offsetY : bucketOffset)
+            else
             {
-                const int iy = indexY + offsetY;
-                if (iy < 0 || iy >= m_numSidesY)
-                {
-                    continue;
-                }
-
-                const auto &bucket = m_buckets[ix + m_numSidesX * iy];
-                if (sampledIndex < bucket.size())
-                {
-                    return bucket[sampledIndex];
-                }
-                else
-                {
-                    sampledIndex -= bucket.size();
-                }
+                sampledIndex -= bucket.size();
             }
         }
     }
