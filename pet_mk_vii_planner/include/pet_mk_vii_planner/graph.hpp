@@ -3,6 +3,7 @@
 #include "pet_mk_vii_planner/rrtDefinitions.hpp"
 
 #include <functional>
+#include <utility>
 #include <vector>
 
 namespace pet::rrt
@@ -48,7 +49,11 @@ class Graph
   private:
     const Node &storeNode(const Node &node);
 
+    /// @brief Get 1D bucket index from node.
     int findBucketIndex(const Node &node) const;
+
+    /// @brief Get pair of 2D bucket indices from state.
+    std::pair<int, int> findBucketIndexPair(const VehicleState &state) const;
 
   private:
     std::vector<std::vector<Node>> m_buckets;

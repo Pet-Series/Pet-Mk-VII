@@ -91,10 +91,7 @@ Node Graph::findClosest(const VehicleState &targetState) const
         return ugl::lie::ominus(start.pose, desiredStartPose).squaredNorm();
     };
 
-    const double localX = targetState.pose.position().x() - m_boundingBox.min.x();
-    const double localY = targetState.pose.position().y() - m_boundingBox.min.y();
-    const int    indexX = static_cast<int>(std::floor(localX / kBucketSize));
-    const int    indexY = static_cast<int>(std::floor(localY / kBucketSize));
+    const auto [indexX, indexY] = findBucketIndexPair(targetState);
 
     const std::array bucketOffset = {-1, 0, 1};
 
@@ -152,10 +149,7 @@ Node Graph::sampleClose(const VehicleState &targetState) const
 {
     util::TikTok timer{"Graph::sampleClose"};
 
-    const double localX = targetState.pose.position().x() - m_boundingBox.min.x();
-    const double localY = targetState.pose.position().y() - m_boundingBox.min.y();
-    const int    indexX = static_cast<int>(std::floor(localX / kBucketSize));
-    const int    indexY = static_cast<int>(std::floor(localY / kBucketSize));
+    const auto [indexX, indexY] = findBucketIndexPair(targetState);
 
     const std::array bucketOffset = {-2, -1, 0, 1, 2};
 
@@ -259,17 +253,23 @@ const Node &Graph::storeNode(const Node &node)
 
 int Graph::findBucketIndex(const Node &node) const
 {
-    assert(m_boundingBox.min.x() <= node.state.pose.position().x());
-    assert(m_boundingBox.max.x() >= node.state.pose.position().x());
-    assert(m_boundingBox.min.y() <= node.state.pose.position().y());
-    assert(m_boundingBox.max.y() >= node.state.pose.position().y());
+    const auto [indexX, indexY] = findBucketIndexPair(node.state);
+    return indexX + m_numSidesX * indexY;
+}
 
-    const double localX = node.state.pose.position().x() - m_boundingBox.min.x();
-    const double localY = node.state.pose.position().y() - m_boundingBox.min.y();
+std::pair<int, int> Graph::findBucketIndexPair(const VehicleState &state) const
+{
+    assert(m_boundingBox.min.x() <= state.pose.position().x());
+    assert(m_boundingBox.max.x() >= state.pose.position().x());
+    assert(m_boundingBox.min.y() <= state.pose.position().y());
+    assert(m_boundingBox.max.y() >= state.pose.position().y());
+
+    const double localX = state.pose.position().x() - m_boundingBox.min.x();
+    const double localY = state.pose.position().y() - m_boundingBox.min.y();
     const int    indexX = static_cast<int>(std::floor(localX / kBucketSize));
     const int    indexY = static_cast<int>(std::floor(localY / kBucketSize));
 
-    return indexX + m_numSidesX * indexY;
+    return {indexX, indexY};
 }
 
 void Graph::forEachNode(const std::function<void(const Node &)> &function) const
