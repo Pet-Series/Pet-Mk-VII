@@ -46,3 +46,5 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
+
+add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
