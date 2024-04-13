@@ -17,23 +17,6 @@ namespace
 
 template <typename ScalarType> constexpr int sign(ScalarType x) { return x < 0 ? -1 : 1; }
 
-template <int degree> double maxSpeed(const Bezier<degree> &curve)
-{
-    static constexpr double kTimeStepSize = 0.05;
-
-    const auto velocityCurve = curve.getDerivative();
-    double     maxSpeed      = -std::numeric_limits<double>::infinity();
-    for (double t = 0.0; t <= velocityCurve.duration(); t += kTimeStepSize)
-    {
-        const double speed = velocityCurve.value(t).norm();
-        if (speed > maxSpeed)
-        {
-            maxSpeed = speed;
-        }
-    }
-    return maxSpeed;
-}
-
 template <int degree>
 bool isCurvatureHigherThan(const Bezier<degree> &curve, double maxCurvature)
 {
@@ -68,27 +51,6 @@ double getPlanarForwardVelocity(const Bezier<degree>     &bezier,
     const ugl::Vector3 globalVel = bezier.velocity(t);
     const ugl::Vector3 localVel  = orientation.inverse() * globalVel;
     return localVel.x();
-}
-
-template <int degree>
-Path computePath(const Bezier<degree> &bezier, double startTime, int numberOfPoints)
-{
-    assert(numberOfPoints > 1);
-    std::vector<rrt::VehicleState> path{};
-
-    const double ratioDelta = 1.0 / (numberOfPoints - 1);
-    double       ratio      = 0.0;
-    for (int i = 0; i < numberOfPoints; ++i)
-    {
-        const auto relativeTimestamp = util::interpolate(0.0, bezier.duration(), ratio);
-        const auto pose              = bezier.planarPose(relativeTimestamp);
-        const auto forwardVelocity =
-            getPlanarForwardVelocity(bezier, pose.rotation(), relativeTimestamp);
-        path.push_back(
-            rrt::VehicleState{pose, forwardVelocity, startTime + relativeTimestamp});
-        ratio += ratioDelta;
-    }
-    return path;
 }
 
 template <int degree>
@@ -179,38 +141,6 @@ steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
     {
         return {};
     }
-}
-
-std::optional<std::pair<VehicleState, Path>>
-steerBezierKinematic(const VehicleState &start, const VehicleState &desiredEnd,
-                     const VehicleModel &vehicleModel)
-{
-    const double       duration = 1.0;
-    const ugl::Vector3 startVelocity =
-        start.pose.rotate(ugl::Vector3{start.velocity, 0.0, 0.0});
-    const ugl::Vector3 endVelocity =
-        desiredEnd.pose.rotate(ugl::Vector3{desiredEnd.velocity, 0.0, 0.0});
-
-    const CubicBezier bezier =
-        buildCubicBezier(duration, start.pose.position(), startVelocity,
-                         desiredEnd.pose.position(), endVelocity);
-
-    if (maxSpeed(bezier) > vehicleModel.maxSpeed)
-    {
-        return {};
-    }
-    if (isCurvatureHigherThan(bezier, vehicleModel.maxCurvature))
-    {
-        return {};
-    }
-
-    VehicleState endState{};
-    endState.pose      = desiredEnd.pose;
-    endState.velocity  = desiredEnd.velocity;
-    endState.timestamp = start.timestamp + duration;
-
-    const auto path = computePath(bezier, start.timestamp, 20);
-    return std::pair{endState, path};
 }
 
 } // namespace pet::rrt

@@ -10,8 +10,4 @@ std::optional<std::pair<VehicleState, Path>>
 steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
                 const VehicleModel &vehicleModel);
 
-std::optional<std::pair<VehicleState, Path>>
-steerBezierKinematic(const VehicleState &start, const VehicleState &desiredEnd,
-                     const VehicleModel &vehicleModel);
-
 } // namespace pet::rrt
