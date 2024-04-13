@@ -2,7 +2,7 @@ from setuptools import setup
 import os
 from glob import glob
 
-package_name = 'pet_mk_vii'
+package_name = 'pet_mk_vii_launch'
 
 setup(
     name=package_name,
@@ -18,7 +18,7 @@ setup(
     zip_safe=True,
     maintainer='seniorKullken',
     maintainer_email='stefan.kull@gmail.com',
-    description='Main folder for Pet-Mk.VII(seven) - The Ackermann Vehicle/robot',
+    description='Launch/bringup package for Pet-Mk.VII(seven) - The Ackermann Vehicle/robot',
     license='MIT',
     tests_require=['pytest'],
     entry_points={},

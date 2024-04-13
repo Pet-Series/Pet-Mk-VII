@@ -1,0 +1,28 @@
+# BasedOnStyle: Google
+---
+Language: Cpp
+
+IndentWidth: 4
+AccessModifierOffset: -2
+
+ColumnLimit: 90
+
+AlignConsecutiveDeclarations: Consecutive
+AlignConsecutiveAssignments: Consecutive
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass:      true
+  AfterControlStatement: Always
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock: true
+  BeforeCatch:     true
+  BeforeElse:      true
+  BeforeLambdaBody: false
+  BeforeWhile:     true
+
+InsertNewlineAtEOF: true
