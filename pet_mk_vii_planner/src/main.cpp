@@ -37,7 +37,8 @@ class RrtSimulation : public rclcpp::Node
 
     void runRrt();
 
-    rrt::Goal loadGoalPose() const;
+    rrt::Goal         loadGoalPose() const;
+    rrt::VehicleModel loadVehicleModel() const;
 
   private:
     RvizVisualizer m_visualizer;
@@ -48,14 +49,17 @@ RrtSimulation::RrtSimulation() : Node("rrt_simulation"), m_visualizer(*this)
     declare_parameter("goal.x", rclcpp::PARAMETER_DOUBLE);
     declare_parameter("goal.y", rclcpp::PARAMETER_DOUBLE);
     declare_parameter("goal.yaw", rclcpp::PARAMETER_DOUBLE);
+
+    declare_parameter("max_speed", rclcpp::PARAMETER_DOUBLE);
+    declare_parameter("max_curvature", rclcpp::PARAMETER_DOUBLE);
 }
 
 void RrtSimulation::runRrt()
 {
-    const rrt::SearchContext searchContext = [] {
+    const rrt::SearchContext searchContext = [this] {
         rrt::SearchContext context{};
         context.maxIterations    = 100;
-        context.vehicleModel     = rrt::VehicleModel{};
+        context.vehicleModel     = loadVehicleModel();
         context.vehicleFootprint = rrt::VehicleFootprint{{-0.02, 0.05}, {0.18, 0.05}};
         context.searchSpace      = rrt::BoundingBox{{-5.0, -5.0}, {5.0, 5.0}};
         context.collisionMap     = rrt::CollisionMap{};
@@ -128,6 +132,13 @@ rrt::Goal RrtSimulation::loadGoalPose() const
     const ugl::lie::Pose goalPose{goalOrientation, goalPosition};
 
     return rrt::Goal{goalPose};
+}
+
+rrt::VehicleModel RrtSimulation::loadVehicleModel() const
+{
+    const double max_speed     = get_parameter("max_speed").as_double();
+    const double max_curvature = get_parameter("max_curvature").as_double();
+    return rrt::VehicleModel{max_speed, max_curvature};
 }
 
 } // namespace pet

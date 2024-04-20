@@ -1,5 +1,7 @@
 /rrt_simulation:
   ros__parameters:
+    max_speed: 0.5
+    max_curvature: 2.0
     goal:
       x: 3.0
       y: 4.0
