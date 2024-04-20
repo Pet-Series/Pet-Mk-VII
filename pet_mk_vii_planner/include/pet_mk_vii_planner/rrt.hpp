@@ -5,6 +5,7 @@
 #include "pet_mk_vii_planner/graph.hpp"
 #include "pet_mk_vii_planner/rrtDefinitions.hpp"
 
+#include <cstdint>
 #include <optional>
 #include <utility>
 
@@ -17,7 +18,7 @@ using SteerFunction = std::optional<std::pair<VehicleState, Path>> (*)(
 
 struct SearchContext
 {
-    int maxIterations;
+    std::int64_t maxIterations;
 
     VehicleModel     vehicleModel;
     VehicleFootprint vehicleFootprint;

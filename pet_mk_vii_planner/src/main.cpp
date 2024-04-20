@@ -15,6 +15,7 @@
 
 #include <visualization_msgs/msg/marker.hpp>
 
+#include <cstdint>
 #include <iostream>
 #include <optional>
 #include <vector>
@@ -46,19 +47,22 @@ class RrtSimulation : public rclcpp::Node
 
 RrtSimulation::RrtSimulation() : Node("rrt_simulation"), m_visualizer(*this)
 {
-    declare_parameter("goal.x", rclcpp::PARAMETER_DOUBLE);
-    declare_parameter("goal.y", rclcpp::PARAMETER_DOUBLE);
-    declare_parameter("goal.yaw", rclcpp::PARAMETER_DOUBLE);
+    declare_parameter("max_outer_iterations", rclcpp::PARAMETER_INTEGER);
+    declare_parameter("max_inner_iterations", rclcpp::PARAMETER_INTEGER);
 
     declare_parameter("max_speed", rclcpp::PARAMETER_DOUBLE);
     declare_parameter("max_curvature", rclcpp::PARAMETER_DOUBLE);
+
+    declare_parameter("goal.x", rclcpp::PARAMETER_DOUBLE);
+    declare_parameter("goal.y", rclcpp::PARAMETER_DOUBLE);
+    declare_parameter("goal.yaw", rclcpp::PARAMETER_DOUBLE);
 }
 
 void RrtSimulation::runRrt()
 {
     const rrt::SearchContext searchContext = [this] {
         rrt::SearchContext context{};
-        context.maxIterations    = 100;
+        context.maxIterations    = get_parameter("max_inner_iterations").as_int();
         context.vehicleModel     = loadVehicleModel();
         context.vehicleFootprint = rrt::VehicleFootprint{{-0.02, 0.05}, {0.18, 0.05}};
         context.searchSpace      = rrt::BoundingBox{{-5.0, -5.0}, {5.0, 5.0}};
@@ -78,7 +82,8 @@ void RrtSimulation::runRrt()
     rrt::SearchDiagnostics aggregatedDiag{};
 
     std::cout << "Starting search..." << std::endl;
-    for (int i = 0; i < 500; ++i)
+    const std::int64_t maxLoops = get_parameter("max_outer_iterations").as_int();
+    for (int i = 0; i < maxLoops; ++i)
     {
         if (!rclcpp::ok())
         {

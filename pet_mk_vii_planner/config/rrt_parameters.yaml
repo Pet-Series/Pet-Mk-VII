@@ -1,5 +1,7 @@
 /rrt_simulation:
   ros__parameters:
+    max_outer_iterations: 500
+    max_inner_iterations: 100
     max_speed: 0.5
     max_curvature: 2.0
     goal:
