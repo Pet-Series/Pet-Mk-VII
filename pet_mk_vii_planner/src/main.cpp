@@ -33,7 +33,7 @@ void printSearchInfo(const rrt::SearchDiagnostics &diag)
 class RrtSimulation : public rclcpp::Node
 {
   public:
-    RrtSimulation() : Node("rrt_simulation"), m_visualizer(*this) {}
+    RrtSimulation();
 
     void runRrt();
 
@@ -42,6 +42,13 @@ class RrtSimulation : public rclcpp::Node
   private:
     RvizVisualizer m_visualizer;
 };
+
+RrtSimulation::RrtSimulation() : Node("rrt_simulation"), m_visualizer(*this)
+{
+    declare_parameter("goal.x", rclcpp::PARAMETER_DOUBLE);
+    declare_parameter("goal.y", rclcpp::PARAMETER_DOUBLE);
+    declare_parameter("goal.yaw", rclcpp::PARAMETER_DOUBLE);
+}
 
 void RrtSimulation::runRrt()
 {
@@ -110,18 +117,14 @@ void RrtSimulation::runRrt()
 
 rrt::Goal RrtSimulation::loadGoalPose() const
 {
-    // const ugl::Vector3 goalPosition{4.0, -1.0, 0.0};
-    // const ugl::Vector3 goalPosition{4.0, 1.0, 0.0};
-    // const ugl::Vector3 goalPosition{-4.0, 1.0, 0.0};
-    // const ugl::Vector3 goalPosition{0.0, 4.0, 0.0};
-    const ugl::Vector3 goalPosition{2.0, 4.0, 0.0};
+    const double x   = get_parameter("goal.x").as_double();
+    const double y   = get_parameter("goal.y").as_double();
+    const double yaw = get_parameter("goal.yaw").as_double();
 
-    // const double goalHeading = 0.0;
-    // const double goalHeading = M_PI;
-    const double goalHeading = -M_PI / 2;
-
+    const ugl::Vector3        goalPosition{x, y, 0.0};
     const ugl::UnitQuaternion goalOrientation{
-        Eigen::AngleAxisd{goalHeading, ugl::Vector3::UnitZ()}};
+        Eigen::AngleAxisd{yaw, ugl::Vector3::UnitZ()}};
+
     const ugl::lie::Pose goalPose{goalOrientation, goalPosition};
 
     return rrt::Goal{goalPose};
