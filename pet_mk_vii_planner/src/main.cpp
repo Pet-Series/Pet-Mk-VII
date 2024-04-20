@@ -37,6 +37,8 @@ class RrtSimulation : public rclcpp::Node
 
     void runRrt();
 
+    rrt::Goal loadGoalPose() const;
+
   private:
     RvizVisualizer m_visualizer;
 };
@@ -55,23 +57,9 @@ void RrtSimulation::runRrt()
     }();
 
     const rrt::VehicleState startState{ugl::lie::Pose::Identity(), 0.0};
+    const rrt::Goal         goal = loadGoalPose();
 
-    // const ugl::Vector3 goalPosition{4.0, -1.0, 0.0};
-    // const ugl::Vector3 goalPosition{4.0, 1.0, 0.0};
-    // const ugl::Vector3 goalPosition{-4.0, 1.0, 0.0};
-    // const ugl::Vector3 goalPosition{0.0, 4.0, 0.0};
-    const ugl::Vector3 goalPosition{2.0, 4.0, 0.0};
-
-    // const double goalHeading = 0.0;
-    // const double goalHeading = M_PI;
-    const double goalHeading = -M_PI / 2;
-
-    const ugl::UnitQuaternion goalOrientation{
-        Eigen::AngleAxisd{goalHeading, ugl::Vector3::UnitZ()}};
-    const ugl::lie::Pose goalPose{goalOrientation, goalPosition};
-
-    rrt::Graph      searchTree{startState, searchContext.searchSpace};
-    const rrt::Goal goal{goalPose};
+    rrt::Graph searchTree{startState, searchContext.searchSpace};
 
     std::vector<rrt::Graph>               searchHistory{};
     std::optional<std::vector<rrt::Node>> path{};
@@ -118,6 +106,25 @@ void RrtSimulation::runRrt()
     printSearchInfo(aggregatedDiag);
 
     util::TikTok::printData();
+}
+
+rrt::Goal RrtSimulation::loadGoalPose() const
+{
+    // const ugl::Vector3 goalPosition{4.0, -1.0, 0.0};
+    // const ugl::Vector3 goalPosition{4.0, 1.0, 0.0};
+    // const ugl::Vector3 goalPosition{-4.0, 1.0, 0.0};
+    // const ugl::Vector3 goalPosition{0.0, 4.0, 0.0};
+    const ugl::Vector3 goalPosition{2.0, 4.0, 0.0};
+
+    // const double goalHeading = 0.0;
+    // const double goalHeading = M_PI;
+    const double goalHeading = -M_PI / 2;
+
+    const ugl::UnitQuaternion goalOrientation{
+        Eigen::AngleAxisd{goalHeading, ugl::Vector3::UnitZ()}};
+    const ugl::lie::Pose goalPose{goalOrientation, goalPosition};
+
+    return rrt::Goal{goalPose};
 }
 
 } // namespace pet
