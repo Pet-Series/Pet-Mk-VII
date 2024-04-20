@@ -33,8 +33,9 @@ bool isCurvatureHigherThan(const Bezier<degree> &curve, double maxCurvature)
     }
 
     static constexpr double kTimeStepSize = 0.05;
-    for (double t = kTimeStepSize; t < curve.duration(); t += kTimeStepSize)
+    for (int i = 1; i < curve.duration() / kTimeStepSize; ++i)
     {
+        const double t         = kTimeStepSize * i;
         const double curvature = std::abs(curve.planarCurvature(t));
         if (curvature > maxCurvature)
         {
