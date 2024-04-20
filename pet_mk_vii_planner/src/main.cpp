@@ -136,9 +136,9 @@ rrt::Goal RrtSimulation::loadGoalPose() const
 
 rrt::VehicleModel RrtSimulation::loadVehicleModel() const
 {
-    const double max_speed     = get_parameter("max_speed").as_double();
-    const double max_curvature = get_parameter("max_curvature").as_double();
-    return rrt::VehicleModel{max_speed, max_curvature};
+    const double maxSpeed     = get_parameter("max_speed").as_double();
+    const double maxCurvature = get_parameter("max_curvature").as_double();
+    return rrt::VehicleModel{maxSpeed, maxCurvature};
 }
 
 } // namespace pet
