@@ -2,12 +2,12 @@ add_executable(bezier_connection_area)
 
 target_include_directories(bezier_connection_area
   PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/
+    ${PROJECT_SOURCE_DIR}/tools/
 )
 
 target_sources(bezier_connection_area
   PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/bezier_connection_area.cpp
+    ${PROJECT_SOURCE_DIR}/tools/bezier_connection_area.cpp
 )
 
 target_link_libraries(bezier_connection_area
