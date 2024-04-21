@@ -67,6 +67,11 @@ template <int degree> class Bezier
         return Bezier{m_duration, reverse_points};
     }
 
+    /// @brief Calculate the approximate arc-length of the curve.
+    /// @param steps number of steps in approximation
+    /// @return Approximated arc-length
+    double arcLength(int steps = 10) const;
+
   private:
     ugl::Vector3 evaluate(double t) const
     {
@@ -145,6 +150,21 @@ template <int degree> ugl::lie::Pose Bezier<degree>::planarPose(double t) const
     const auto orientation =
         ugl::UnitQuaternion{Eigen::AngleAxisd{heading, ugl::Vector3::UnitZ()}};
     return ugl::lie::Pose{orientation, position(t)};
+}
+
+template <int degree> double Bezier<degree>::arcLength(int steps) const
+{
+    double       length           = 0.0;
+    auto         previousPosition = start();
+    const double dt               = duration() / (steps + 1);
+    for (int i = 0; i < steps; ++i)
+    {
+        const double t               = dt * (i + 1);
+        const auto   currentPosition = position(t);
+        length += (currentPosition - previousPosition).norm();
+        previousPosition = currentPosition;
+    }
+    return length;
 }
 
 using CubicBezier  = Bezier<3>;
