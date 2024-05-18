@@ -14,6 +14,7 @@ target_sources(rrt
     ${PROJECT_SOURCE_DIR}/src/utility/algorithm.cpp
     ${PROJECT_SOURCE_DIR}/src/utility/interpolation.cpp
     ${PROJECT_SOURCE_DIR}/src/utility/tiktok.cpp
+    ${PROJECT_SOURCE_DIR}/src/velocityProfile.cpp
 )
 
 target_include_directories(rrt

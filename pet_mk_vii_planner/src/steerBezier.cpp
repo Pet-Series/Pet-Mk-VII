@@ -4,6 +4,7 @@
 #include "pet_mk_vii_planner/rrtDefinitions.hpp"
 #include "utility/interpolation.hpp"
 #include "utility/tiktok.hpp"
+#include "velocityProfile.hpp"
 
 #include <ugl/math/vector.h>
 
@@ -56,22 +57,34 @@ double getPlanarForwardVelocity(const Bezier<degree>     &bezier,
 
 template <int degree>
 Path computePath(const Bezier<degree> &bezier, const VehicleState &startState,
-                 const VehicleState &endState, int numberOfPoints)
+                 const VehicleState &endState, int numberOfPoints,
+                 const VehicleModel &vehicleModel)
 {
     assert(numberOfPoints > 1);
-    std::vector<rrt::VehicleState> path{};
 
-    const double ratioDelta = 1.0 / (numberOfPoints - 1);
-    double       ratio      = 0.0;
+    const double        ratioDelta = 1.0 / (numberOfPoints - 1);
+    double              ratio      = 0.0;
+    std::vector<double> timestamps{};
+    timestamps.reserve(numberOfPoints);
     for (int i = 0; i < numberOfPoints; ++i)
     {
         const auto relativeTimestamp = util::interpolate(0.0, bezier.duration(), ratio);
-        const auto pose              = bezier.planarPose(relativeTimestamp);
-        const auto velocity =
-            util::interpolate(startState.velocity, endState.velocity, ratio);
-        path.push_back(
-            rrt::VehicleState{pose, velocity, startState.timestamp + relativeTimestamp});
+        timestamps.push_back(relativeTimestamp);
         ratio += ratioDelta;
+    }
+
+    const double arcLength = bezier.arcLength();
+
+    const std::vector<double> velocityProfile = computeVelocityProfile(
+        timestamps, arcLength, startState.velocity, endState.velocity, vehicleModel);
+
+    std::vector<rrt::VehicleState> path{};
+    path.reserve(numberOfPoints);
+    for (int i = 0; i < numberOfPoints; ++i)
+    {
+        const auto pose = bezier.planarPose(timestamps[i]);
+        path.push_back(rrt::VehicleState{pose, velocityProfile[i],
+                                         startState.timestamp + timestamps[i]});
     }
     return path;
 }
@@ -135,7 +148,7 @@ steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
         endState.velocity  = endVelocity;
         endState.timestamp = start.timestamp + duration;
 
-        const auto path = computePath(bezier.value(), start, endState, 10);
+        const auto path = computePath(bezier.value(), start, endState, 10, vehicleModel);
         return std::pair{endState, path};
     }
     else
