@@ -1,0 +1,10 @@
+services:
+  MyDevContainer:
+    container_name: MyDevContainer
+    # image: docker.io/osrf/ros:humble-desktop
+    image: planner_demo
+    network_mode: host
+    volumes:
+      - /home/vk/ros2_ws:/ros2_ws:rw
+    stdin_open: true
+    tty: true
