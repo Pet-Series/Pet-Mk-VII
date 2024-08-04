@@ -15,6 +15,15 @@ std::vector<double> computeVelocityProfile(const std::vector<double> &timeRatios
                                            const VehicleModel &vehicleModel)
 {
     std::vector<double> velocitySamples{};
+
+    if (std::abs(startVel) > vehicleModel.maxSpeed ||
+        std::abs(endVel) > vehicleModel.maxSpeed)
+    {
+        // In case of mutually inconsistent velocity constraints, return an empty list and
+        // let the caller handle the situation.
+        return velocitySamples;
+    }
+
     velocitySamples.reserve(timeRatios.size());
 
     std::transform(

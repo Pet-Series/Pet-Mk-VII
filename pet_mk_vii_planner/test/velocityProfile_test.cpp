@@ -56,4 +56,45 @@ TEST_F(VelocityProfileTest, Given_RatioEqualOne_Expect_VelocityEqualEndVelocity)
     EXPECT_EQ(velocitySamples.back(), endVelocity);
 }
 
+TEST_F(VelocityProfileTest, Given_StartVelocityHigherThanMaxSpeed_Expect_EmptyOutput)
+{
+    m_vehicleModel.maxSpeed    = 1.0;
+    const double startVelocity = 1.5;
+    const auto   sampleRatios  = std::vector{0.0, 0.5, 1.0};
+    const auto   velocitySamples =
+        computeVelocityProfile(sampleRatios, 5.0, startVelocity, 2.0, m_vehicleModel);
+    EXPECT_TRUE(velocitySamples.empty());
+}
+
+TEST_F(VelocityProfileTest, Given_EndVelocityHigherThanMaxSpeed_Expect_EmptyOutput)
+{
+    m_vehicleModel.maxSpeed   = 1.0;
+    const double endVelocity  = 1.5;
+    const auto   sampleRatios = std::vector{0.0, 0.5, 1.0};
+    const auto   velocitySamples =
+        computeVelocityProfile(sampleRatios, 5.0, 2.0, endVelocity, m_vehicleModel);
+    EXPECT_TRUE(velocitySamples.empty());
+}
+
+TEST_F(VelocityProfileTest,
+       Given_StartVelocityLowerThanNegativeMaxSpeed_Expect_EmptyOutput)
+{
+    m_vehicleModel.maxSpeed    = 1.0;
+    const double startVelocity = 1.5;
+    const auto   sampleRatios  = std::vector{0.0, 0.5, 1.0};
+    const auto   velocitySamples =
+        computeVelocityProfile(sampleRatios, 5.0, startVelocity, 2.0, m_vehicleModel);
+    EXPECT_TRUE(velocitySamples.empty());
+}
+
+TEST_F(VelocityProfileTest, Given_EndVelocityLowerThanNegativeMaxSpeed_Expect_EmptyOutput)
+{
+    m_vehicleModel.maxSpeed   = 1.0;
+    const double endVelocity  = 1.5;
+    const auto   sampleRatios = std::vector{0.0, 0.5, 1.0};
+    const auto   velocitySamples =
+        computeVelocityProfile(sampleRatios, 5.0, 2.0, endVelocity, m_vehicleModel);
+    EXPECT_TRUE(velocitySamples.empty());
+}
+
 } // namespace pet::rrt::test
