@@ -38,4 +38,22 @@ TEST_F(VelocityProfileTest, Given_TwoSampleRatios_Expect_TwoVelocitySamples)
     EXPECT_EQ(velocitySamples.size(), 2UL);
 }
 
+TEST_F(VelocityProfileTest, Given_RatioEqualZero_Expect_VelocityEqualStartVelocity)
+{
+    const double startVelocity = 1.5;
+    const auto   sampleRatios  = std::vector{0.0, 0.5, 1.0};
+    const auto   velocitySamples =
+        computeVelocityProfile(sampleRatios, 5.0, startVelocity, 2.0, m_vehicleModel);
+    EXPECT_EQ(velocitySamples.front(), startVelocity);
+}
+
+TEST_F(VelocityProfileTest, Given_RatioEqualOne_Expect_VelocityEqualEndVelocity)
+{
+    const double endVelocity  = 1.5;
+    const auto   sampleRatios = std::vector{0.0, 0.5, 1.0};
+    const auto   velocitySamples =
+        computeVelocityProfile(sampleRatios, 5.0, 2.0, endVelocity, m_vehicleModel);
+    EXPECT_EQ(velocitySamples.back(), endVelocity);
+}
+
 } // namespace pet::rrt::test
