@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pet_mk_vii_planner/graph.hpp"
+#include "pet_mk_vii_planner/rrtDefinitions.hpp"
 
 #include <vector>
 
