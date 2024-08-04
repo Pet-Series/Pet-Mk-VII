@@ -9,28 +9,32 @@
 namespace pet::rrt::test
 {
 
-TEST(VelocityProfileTest, Given_NoSampleRatios_Expect_NoVelocitySamples)
+class VelocityProfileTest : public testing::Test
 {
-    const auto vehicleModel    = rrt::VehicleModel{3.0, 5.0};
-    const auto velocitySamples = computeVelocityProfile({}, 5.0, 2.0, 2.0, vehicleModel);
+  protected:
+    rrt::VehicleModel m_vehicleModel{3.0, 5.0};
+};
+
+TEST_F(VelocityProfileTest, Given_NoSampleRatios_Expect_NoVelocitySamples)
+{
+    const auto velocitySamples =
+        computeVelocityProfile({}, 5.0, 2.0, 2.0, m_vehicleModel);
     EXPECT_EQ(velocitySamples.size(), 0UL);
 }
 
-TEST(VelocityProfileTest, Given_OneSampleRatio_Expect_OneVelocitySample)
+TEST_F(VelocityProfileTest, Given_OneSampleRatio_Expect_OneVelocitySample)
 {
-    const auto vehicleModel = rrt::VehicleModel{3.0, 5.0};
     const auto sampleRatios = std::vector{0.25};
     const auto velocitySamples =
-        computeVelocityProfile(sampleRatios, 5.0, 2.0, 2.0, vehicleModel);
+        computeVelocityProfile(sampleRatios, 5.0, 2.0, 2.0, m_vehicleModel);
     EXPECT_EQ(velocitySamples.size(), 1UL);
 }
 
-TEST(VelocityProfileTest, Given_TwoSampleRatios_Expect_TwoVelocitySamples)
+TEST_F(VelocityProfileTest, Given_TwoSampleRatios_Expect_TwoVelocitySamples)
 {
-    const auto vehicleModel = rrt::VehicleModel{3.0, 5.0};
     const auto sampleRatios = std::vector{0.25, 0.75};
     const auto velocitySamples =
-        computeVelocityProfile(sampleRatios, 5.0, 2.0, 2.0, vehicleModel);
+        computeVelocityProfile(sampleRatios, 5.0, 2.0, 2.0, m_vehicleModel);
     EXPECT_EQ(velocitySamples.size(), 2UL);
 }
 
