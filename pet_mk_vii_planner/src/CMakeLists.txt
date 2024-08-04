@@ -53,7 +53,7 @@ target_link_libraries(rrt_simulation
     project_warnings
 )
 
-ament_target_dependencies(rrt_simulation 
+ament_target_dependencies(rrt_simulation
     geometry_msgs
     visualization_msgs
     rclcpp

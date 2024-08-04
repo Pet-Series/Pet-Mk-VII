@@ -21,8 +21,8 @@ target_include_directories(${PROJECT_NAME}_rrt_test PUBLIC
 )
 
 target_link_libraries(${PROJECT_NAME}_rrt_test
-    # GTest::gtest_main 
-    # gtest_main 
+    # GTest::gtest_main
+    # gtest_main
     rrt
     ugl::lie_group
     project_options
