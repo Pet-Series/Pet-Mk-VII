@@ -9,16 +9,16 @@
 namespace pet::rrt
 {
 
-std::vector<double> computeVelocityProfile(const std::vector<double> &sampleRatios,
+std::vector<double> computeVelocityProfile(const std::vector<double> &timeRatios,
                                            double totalDistance, double startVel,
                                            double              endVel,
                                            const VehicleModel &vehicleModel)
 {
     std::vector<double> velocitySamples{};
-    velocitySamples.reserve(sampleRatios.size());
+    velocitySamples.reserve(timeRatios.size());
 
     std::transform(
-        sampleRatios.cbegin(), sampleRatios.cend(), std::back_inserter(velocitySamples),
+        timeRatios.cbegin(), timeRatios.cend(), std::back_inserter(velocitySamples),
         [&](double ratio) { return util::interpolate(startVel, endVel, ratio); });
 
     return velocitySamples;
