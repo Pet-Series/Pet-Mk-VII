@@ -9,6 +9,8 @@ find_package(visualization_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ugl REQUIRED)
 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 add_library(project_options INTERFACE)
 target_compile_features(project_options INTERFACE cxx_std_17)
 
