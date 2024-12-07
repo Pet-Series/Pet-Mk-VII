@@ -15,6 +15,7 @@ std::vector<double> computeVelocityProfile(const std::vector<double> &timeRatios
                                            const VehicleModel &vehicleModel)
 {
     std::vector<double> velocitySamples{};
+    velocitySamples.reserve(timeRatios.size());
 
     if (std::abs(startVel) > vehicleModel.maxSpeed ||
         std::abs(endVel) > vehicleModel.maxSpeed)
@@ -24,11 +25,13 @@ std::vector<double> computeVelocityProfile(const std::vector<double> &timeRatios
         return velocitySamples;
     }
 
-    velocitySamples.reserve(timeRatios.size());
+    auto interpolateVelocity = [&](double ratio) {
+        return util::interpolate(startVel, endVel, ratio);
+    };
 
-    std::transform(
-        timeRatios.cbegin(), timeRatios.cend(), std::back_inserter(velocitySamples),
-        [&](double ratio) { return util::interpolate(startVel, endVel, ratio); });
+    std::transform(timeRatios.cbegin(), timeRatios.cend(),
+                   std::back_inserter(velocitySamples),
+                   [&](double ratio) { return interpolateVelocity(ratio); });
 
     return velocitySamples;
 }
