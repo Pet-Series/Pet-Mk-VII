@@ -5,12 +5,14 @@
 #include <vector>
 
 namespace pet::rrt
-{ 
+{
 
 struct VehicleModel
 {
-    double maxSpeed     = 0.5;
-    double maxCurvature = 2.0;
+    double maxSpeed        = 0.5;
+    double maxCurvature    = 2.0;
+    double maxAcceleration = 0.5; /// TODO: Read from parameter file.
+    double maxDeceleration = 0.5; /// TODO: Read from parameter file.
 };
 
 struct VehicleState
