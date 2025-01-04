@@ -44,34 +44,21 @@ std::vector<double> computeVelocityProfile(const std::vector<double> &timeRatios
     const double cruiseDistance = totalDistance - (accelerationDistance + decelerationDistance);
 
     const double cruiseDuration = cruiseDistance / vehicleModel.maxSpeed;
-    const double totalDuration  = accelerationDuration + decelerationDuration + cruiseDuration;
+    const double totalDuration =
+        accelerationDuration + cruiseDuration + decelerationDuration;
 
-    /// TODO: Implement in terms of matlab's interp1(), i.e. f(t) = interp1(x, f(x), t).
-    auto interpolateVelocity = [&](double ratio) {
-        const double scaledRatio = ratio * totalDuration;
-        if (scaledRatio < accelerationDuration)
-        {
-            // Is in acceleration phase.
-            return util::interpolate(startVel, vehicleModel.maxSpeed,
-                                     scaledRatio / accelerationDuration);
-        }
-        else if (scaledRatio > (totalDuration - decelerationDuration))
-        {
-            // Is in deceleration phase.
-            double decelerationRatio =
-                scaledRatio - (totalDuration - decelerationDuration);
-            return util::interpolate(vehicleModel.maxSpeed, endVel,
-                                     decelerationRatio / decelerationDuration);
-        }
-        else
-        {
-            // Is in cruising phase.
-            return vehicleModel.maxSpeed;
-        }
-    };
+    // Create vectors with x and y values of velocity trapezoid that we can use to
+    // interpolate.
+    const std::vector<double> samplePoints = {
+        0.0, accelerationDuration, accelerationDuration + cruiseDuration, totalDuration};
+    const std::vector<double> sampleValues = {startVel, vehicleModel.maxSpeed,
+                                              vehicleModel.maxSpeed, endVel};
 
-    std::transform(timeRatios.cbegin(), timeRatios.cend(), std::back_inserter(velocitySamples),
-                   [&](double ratio) { return interpolateVelocity(ratio); });
+    std::vector<double> queryPoints(timeRatios.size());
+    std::transform(timeRatios.cbegin(), timeRatios.cend(), queryPoints.begin(),
+                   [&](double ratio) { return ratio * totalDuration; });
+
+    velocitySamples = util::interpolate(samplePoints, sampleValues, queryPoints);
 
     return velocitySamples;
 }
