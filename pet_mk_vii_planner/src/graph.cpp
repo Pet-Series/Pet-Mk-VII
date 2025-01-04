@@ -43,10 +43,7 @@ const Node &Graph::addNode(const VehicleState &state, const Path &pathFromParent
     return storeNode(node);
 }
 
-Node &Graph::getNode(const NodeId &id)
-{
-    return m_buckets[id.bucketIndex][id.internalIndex];
-}
+Node &Graph::getNode(const NodeId &id) { return m_buckets[id.bucketIndex][id.internalIndex]; }
 
 const Node &Graph::getNode(const NodeId &id) const
 {
@@ -203,8 +200,7 @@ std::pair<int, int> Graph::findBucketIndexPair(const VehicleState &state) const
     return {indexX, indexY};
 }
 
-std::optional<Node>
-Graph::sampleFromBuckets(const std::vector<std::size_t> &bucketIndices) const
+std::optional<Node> Graph::sampleFromBuckets(const std::vector<std::size_t> &bucketIndices) const
 {
     std::size_t totalPotentialNodes = 0;
     for (const auto &bucketIndex : bucketIndices)

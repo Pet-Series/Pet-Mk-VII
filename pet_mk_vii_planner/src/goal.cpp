@@ -11,10 +11,7 @@ template <typename ScalarType> constexpr ScalarType square(ScalarType x) { retur
 
 } // namespace
 
-VehicleState Goal::sampleState() const
-{
-    return VehicleState{m_targetPose, m_targetSpeed};
-}
+VehicleState Goal::sampleState() const { return VehicleState{m_targetPose, m_targetSpeed}; }
 
 bool Goal::isReached(const VehicleState &state) const
 {
@@ -23,8 +20,7 @@ bool Goal::isReached(const VehicleState &state) const
         state.pose.rotation().to_quaternion());
     const auto speedDiff = m_targetSpeed - state.velocity;
     return posDiff.squaredNorm() < square(m_positionTolerance) &&
-           std::abs(angleDiff) < m_headingTolerance &&
-           std::abs(speedDiff) < m_speedTolerance;
+           std::abs(angleDiff) < m_headingTolerance && std::abs(speedDiff) < m_speedTolerance;
 }
 
 } // namespace pet::rrt

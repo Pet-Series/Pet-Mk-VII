@@ -10,8 +10,7 @@ namespace pet
 namespace
 {
 
-bool isCloseHeading(const ugl::lie::Pose &lhs, const ugl::lie::Pose &rhs,
-                    double tolerance)
+bool isCloseHeading(const ugl::lie::Pose &lhs, const ugl::lie::Pose &rhs, double tolerance)
 {
     const auto rotationDiff = ugl::lie::ominus(lhs.rotation(), rhs.rotation());
     const auto headingDiff  = rotationDiff[2];

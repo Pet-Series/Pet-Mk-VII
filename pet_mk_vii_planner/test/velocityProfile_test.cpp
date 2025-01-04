@@ -17,8 +17,7 @@ class VelocityProfileTest : public testing::Test
 
 TEST_F(VelocityProfileTest, Given_NoSampleRatios_Expect_NoVelocitySamples)
 {
-    const auto velocitySamples =
-        computeVelocityProfile({}, 5.0, 2.0, 2.0, m_vehicleModel);
+    const auto velocitySamples = computeVelocityProfile({}, 5.0, 2.0, 2.0, m_vehicleModel);
     EXPECT_EQ(velocitySamples.size(), 0UL);
 }
 
@@ -76,8 +75,7 @@ TEST_F(VelocityProfileTest, Given_EndVelocityHigherThanMaxSpeed_Expect_EmptyOutp
     EXPECT_TRUE(velocitySamples.empty());
 }
 
-TEST_F(VelocityProfileTest,
-       Given_StartVelocityLowerThanNegativeMaxSpeed_Expect_EmptyOutput)
+TEST_F(VelocityProfileTest, Given_StartVelocityLowerThanNegativeMaxSpeed_Expect_EmptyOutput)
 {
     m_vehicleModel.maxSpeed    = 1.0;
     const double startVelocity = 1.5;
@@ -104,22 +102,21 @@ TEST_F(VelocityProfileTest, Given_LongDistance_Expect_VelocityReachMaxSpeedInMid
     const double startVelocity = 0.0;
     const double endVelocity   = 0.0;
 
-    const auto velocitySamples = computeVelocityProfile(
-        sampleRatios, distance, startVelocity, endVelocity, m_vehicleModel);
+    const auto velocitySamples =
+        computeVelocityProfile(sampleRatios, distance, startVelocity, endVelocity, m_vehicleModel);
 
     EXPECT_NEAR(velocitySamples.back(), m_vehicleModel.maxSpeed, 1e-10);
 }
 
-TEST_F(VelocityProfileTest,
-       Given_StartAndEndVelocityEqualMaxSpeed_Expect_ConstantMaxSpeed)
+TEST_F(VelocityProfileTest, Given_StartAndEndVelocityEqualMaxSpeed_Expect_ConstantMaxSpeed)
 {
     const auto   sampleRatios  = std::vector{0.0, 0.1, 0.5, 0.9, 1.0};
     const double distance      = 10.0;
     const double startVelocity = m_vehicleModel.maxSpeed;
     const double endVelocity   = m_vehicleModel.maxSpeed;
 
-    const auto velocitySamples = computeVelocityProfile(
-        sampleRatios, distance, startVelocity, endVelocity, m_vehicleModel);
+    const auto velocitySamples =
+        computeVelocityProfile(sampleRatios, distance, startVelocity, endVelocity, m_vehicleModel);
 
     for (const auto &vel : velocitySamples)
     {

@@ -5,9 +5,8 @@
 namespace pet::rrt
 {
 
-CubicBezier buildCubicBezier(double duration, const ugl::Vector3 &pos0,
-                             const ugl::Vector3 &vel0, const ugl::Vector3 &pos1,
-                             const ugl::Vector3 &vel1)
+CubicBezier buildCubicBezier(double duration, const ugl::Vector3 &pos0, const ugl::Vector3 &vel0,
+                             const ugl::Vector3 &pos1, const ugl::Vector3 &vel1)
 {
     static constexpr int kDegree = 3;
 
@@ -20,10 +19,9 @@ CubicBezier buildCubicBezier(double duration, const ugl::Vector3 &pos0,
     return CubicBezier{duration, {p0, p1, p2, p3}};
 }
 
-PenticBezier createPenticBezier(double duration, const ugl::Vector3 &pos0,
-                                const ugl::Vector3 &vel0, const ugl::Vector3 &acc0,
-                                const ugl::Vector3 &pos1, const ugl::Vector3 &vel1,
-                                const ugl::Vector3 &acc1)
+PenticBezier createPenticBezier(double duration, const ugl::Vector3 &pos0, const ugl::Vector3 &vel0,
+                                const ugl::Vector3 &acc0, const ugl::Vector3 &pos1,
+                                const ugl::Vector3 &vel1, const ugl::Vector3 &acc1)
 {
     static constexpr int kDegree = 5;
 

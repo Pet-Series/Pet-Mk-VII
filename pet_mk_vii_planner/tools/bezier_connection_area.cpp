@@ -22,8 +22,8 @@ struct QuiverData
 
 ugl::Vector<2> toDirectionVector(double yaw, double scale = 1.0)
 {
-    const auto R = ugl::Matrix<2, 2>{{std::cos(yaw), -std::sin(yaw)},
-                                     {std::sin(yaw), std::cos(yaw)}};
+    const auto R =
+        ugl::Matrix<2, 2>{{std::cos(yaw), -std::sin(yaw)}, {std::sin(yaw), std::cos(yaw)}};
     return R * ugl::Vector<2>::UnitX() * scale;
 }
 

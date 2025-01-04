@@ -131,8 +131,7 @@ rrt::Goal RrtSimulation::loadGoalPose() const
     const double yaw = get_parameter("goal.yaw").as_double();
 
     const ugl::Vector3        goalPosition{x, y, 0.0};
-    const ugl::UnitQuaternion goalOrientation{
-        Eigen::AngleAxisd{yaw, ugl::Vector3::UnitZ()}};
+    const ugl::UnitQuaternion goalOrientation{Eigen::AngleAxisd{yaw, ugl::Vector3::UnitZ()}};
 
     const ugl::lie::Pose goalPose{goalOrientation, goalPosition};
 

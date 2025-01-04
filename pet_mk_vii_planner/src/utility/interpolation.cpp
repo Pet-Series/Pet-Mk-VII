@@ -62,8 +62,7 @@ std::vector<double> interpolate(const std::vector<double> &samplePoints,
 }
 
 std::vector<rrt::VehicleState> interpolatePath(const rrt::VehicleState &start,
-                                              const rrt::VehicleState &end,
-                                              int                     numberOfPoints)
+                                               const rrt::VehicleState &end, int numberOfPoints)
 {
     assert(numberOfPoints > 1);
     std::vector<rrt::VehicleState> path{};

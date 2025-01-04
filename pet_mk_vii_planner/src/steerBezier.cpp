@@ -18,8 +18,7 @@ namespace
 
 template <typename ScalarType> constexpr int sign(ScalarType x) { return x < 0 ? -1 : 1; }
 
-template <int degree>
-bool isCurvatureHigherThan(const Bezier<degree> &curve, double maxCurvature)
+template <int degree> bool isCurvatureHigherThan(const Bezier<degree> &curve, double maxCurvature)
 {
     // Start and end often have the highest curvature.
     const double startCurvature = std::abs(curve.planarCurvature(0.0));
@@ -47,8 +46,8 @@ bool isCurvatureHigherThan(const Bezier<degree> &curve, double maxCurvature)
 }
 
 template <int degree>
-double getPlanarForwardVelocity(const Bezier<degree>     &bezier,
-                                const ugl::lie::Rotation &orientation, double t)
+double getPlanarForwardVelocity(const Bezier<degree> &bezier, const ugl::lie::Rotation &orientation,
+                                double t)
 {
     const ugl::Vector3 globalVel = bezier.velocity(t);
     const ugl::Vector3 localVel  = orientation.inverse() * globalVel;
@@ -57,8 +56,7 @@ double getPlanarForwardVelocity(const Bezier<degree>     &bezier,
 
 template <int degree>
 Path computePath(const Bezier<degree> &bezier, const VehicleState &startState,
-                 const VehicleState &endState, int numberOfPoints,
-                 const VehicleModel &vehicleModel)
+                 const VehicleState &endState, int numberOfPoints, const VehicleModel &vehicleModel)
 {
     assert(numberOfPoints > 1);
 
@@ -83,17 +81,17 @@ Path computePath(const Bezier<degree> &bezier, const VehicleState &startState,
     for (int i = 0; i < numberOfPoints; ++i)
     {
         const auto pose = bezier.planarPose(timestamps[i]);
-        path.push_back(rrt::VehicleState{pose, velocityProfile[i],
-                                         startState.timestamp + timestamps[i]});
+        path.push_back(
+            rrt::VehicleState{pose, velocityProfile[i], startState.timestamp + timestamps[i]});
     }
     return path;
 }
 
 } // namespace
 
-std::optional<std::pair<VehicleState, Path>>
-steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
-                const VehicleModel &vehicleModel)
+std::optional<std::pair<VehicleState, Path>> steerBezierPath(const VehicleState &start,
+                                                             const VehicleState &desiredEnd,
+                                                             const VehicleModel &vehicleModel)
 {
     util::TikTok timer{"rrt::steerBezierPath"};
     // Bezier curves cannot handle changing from forward driving to reversing in a single
@@ -109,13 +107,11 @@ steerBezierPath(const VehicleState &start, const VehicleState &desiredEnd,
     else
     {
         drivingDirection = sign(start.velocity);
-        endVelocity =
-            (drivingDirection == sign(desiredEnd.velocity)) ? desiredEnd.velocity : 0.0;
+        endVelocity = (drivingDirection == sign(desiredEnd.velocity)) ? desiredEnd.velocity : 0.0;
     }
 
     const double       duration     = 1.0;
-    const ugl::Vector3 startTangent =
-        start.pose.rotate(ugl::Vector3::UnitX()) * drivingDirection;
+    const ugl::Vector3 startTangent = start.pose.rotate(ugl::Vector3::UnitX()) * drivingDirection;
     const ugl::Vector3 endTangent =
         desiredEnd.pose.rotate(ugl::Vector3::UnitX()) * drivingDirection;
 

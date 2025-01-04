@@ -25,9 +25,8 @@ class RvizVisualizer
     void resetVisualization();
 
   private:
-    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr m_markerPublisher;
-    rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
-        m_markerArrayPublisher;
+    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr      m_markerPublisher;
+    rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr m_markerArrayPublisher;
 };
 
 } // namespace pet

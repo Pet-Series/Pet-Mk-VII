@@ -44,13 +44,12 @@ std::vector<double> computeVelocityProfile(const std::vector<double> &timeRatios
     const double cruiseDistance = totalDistance - (accelerationDistance + decelerationDistance);
 
     const double cruiseDuration = cruiseDistance / vehicleModel.maxSpeed;
-    const double totalDuration =
-        accelerationDuration + cruiseDuration + decelerationDuration;
+    const double totalDuration  = accelerationDuration + cruiseDuration + decelerationDuration;
 
     // Create vectors with x and y values of velocity trapezoid that we can use to
     // interpolate.
-    const std::vector<double> samplePoints = {
-        0.0, accelerationDuration, accelerationDuration + cruiseDuration, totalDuration};
+    const std::vector<double> samplePoints = {0.0, accelerationDuration,
+                                              accelerationDuration + cruiseDuration, totalDuration};
     const std::vector<double> sampleValues = {startVel, vehicleModel.maxSpeed,
                                               vehicleModel.maxSpeed, endVel};
 

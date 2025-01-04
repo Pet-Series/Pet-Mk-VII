@@ -50,8 +50,8 @@ std::optional<std::pair<VehicleState, Path>> steerCtrv(const VehicleState &start
     velocity[3]             = forwardVel;
 
     VehicleState endState;
-    endState.pose     = ugl::lie::oplus(start.pose, velocity);
-    endState.velocity = velocity[3];
+    endState.pose      = ugl::lie::oplus(start.pose, velocity);
+    endState.velocity  = velocity[3];
     endState.timestamp = start.timestamp + controlDuration;
     const auto path    = util::interpolatePath(start, endState, 20);
 

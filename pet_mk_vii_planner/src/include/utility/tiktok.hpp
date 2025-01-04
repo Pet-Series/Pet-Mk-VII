@@ -34,8 +34,7 @@ class TikTok
     static std::unordered_map<std::string, TimingData> s_aggregatedData;
 };
 
-inline TikTok::TikTok(std::string_view name)
-    : m_name(name), m_startTime(getCurrentTime()){};
+inline TikTok::TikTok(std::string_view name) : m_name(name), m_startTime(getCurrentTime()) {};
 
 inline TikTok::~TikTok()
 {

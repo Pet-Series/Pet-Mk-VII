@@ -14,13 +14,12 @@ namespace pet::rrt
 
 SearchResult search(const Goal &goal, Graph &tree, const SearchContext &context)
 {
-    util::TikTok timer{"rrt::search"};
+    util::TikTok      timer{"rrt::search"};
     SearchDiagnostics diag{};
     for (int i = 0; i < context.maxIterations; ++i)
     {
         ++diag.totalIterations;
-        const auto sampledState =
-            sampleState(goal, context.vehicleModel, context.searchSpace);
+        const auto sampledState = sampleState(goal, context.vehicleModel, context.searchSpace);
 
         // const Node &parentNode = tree.findClosest(sampledState);
         const Node &parentNode = tree.sampleClose(sampledState);
@@ -56,14 +55,13 @@ VehicleState sampleState(const Goal &goal, const VehicleModel &vehicleModel,
             ugl::random::UniformDistribution<2>::sample(searchSpace.min, searchSpace.max);
         const double heading = ugl::random::UniformDistribution<1>::sample(0.0, 2 * M_PI);
 
-        const ugl::UnitQuaternion quaternion{
-            Eigen::AngleAxisd{heading, Eigen::Vector3d::UnitZ()}};
+        const ugl::UnitQuaternion quaternion{Eigen::AngleAxisd{heading, Eigen::Vector3d::UnitZ()}};
 
         VehicleState state{};
         state.pose.set_position({position.x(), position.y(), 0.0});
         state.pose.set_rotation(ugl::lie::Rotation{quaternion});
-        state.velocity = ugl::random::UniformDistribution<1>::sample(
-            -vehicleModel.maxSpeed, vehicleModel.maxSpeed);
+        state.velocity = ugl::random::UniformDistribution<1>::sample(-vehicleModel.maxSpeed,
+                                                                     vehicleModel.maxSpeed);
         return state;
     }
 }

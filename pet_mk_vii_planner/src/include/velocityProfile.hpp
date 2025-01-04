@@ -13,8 +13,7 @@ namespace pet::rrt
 /// @param vehicleModel dynamic constraints
 /// @return List of velocity samples
 std::vector<double> computeVelocityProfile(const std::vector<double> &timeRatios,
-                                           double totalDistance, double startVel,
-                                           double              endVel,
+                                           double totalDistance, double startVel, double endVel,
                                            const VehicleModel &vehicleModel);
 
 } // namespace pet::rrt

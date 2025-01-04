@@ -50,8 +50,7 @@ geometry_msgs::msg::Pose toPoseMsg(const ugl::lie::Pose &pose)
     return msg;
 }
 
-void appendToLineList(const rrt::Path                        &path,
-                      std::vector<geometry_msgs::msg::Point> &points)
+void appendToLineList(const rrt::Path &path, std::vector<geometry_msgs::msg::Point> &points)
 {
     util::adjacent_for_each(path.cbegin(), path.cend(),
                             [&points](const auto &start, const auto &end) {
@@ -67,8 +66,7 @@ RvizVisualizer::RvizVisualizer(rclcpp::Node &nodeHandle)
     m_markerPublisher =
         nodeHandle.create_publisher<visualization_msgs::msg::Marker>("rrt_marker", 10);
     m_markerArrayPublisher =
-        nodeHandle.create_publisher<visualization_msgs::msg::MarkerArray>(
-            "rrt_marker_array", 10);
+        nodeHandle.create_publisher<visualization_msgs::msg::MarkerArray>("rrt_marker_array", 10);
 }
 
 void RvizVisualizer::visualizePath(const std::vector<rrt::Node> &path)
