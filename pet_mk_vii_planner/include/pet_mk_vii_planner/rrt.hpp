@@ -13,8 +13,7 @@ namespace pet::rrt
 {
 
 using SteerFunction = std::optional<std::pair<VehicleState, Path>> (*)(
-    const VehicleState &start, const VehicleState &desiredEnd,
-    const VehicleModel &vehicleModel);
+    const VehicleState &start, const VehicleState &desiredEnd, const VehicleModel &vehicleModel);
 
 struct SearchContext
 {
@@ -49,8 +48,9 @@ struct SearchResult
 
 SearchResult search(const Goal &goal, Graph &tree, const SearchContext &context);
 
-VehicleState sampleState(const Goal &goal, const VehicleModel &vehicleModel,
-                         const BoundingBox &searchSpace);
+VehicleState sampleState(const Goal         &goal,
+                         const VehicleModel &vehicleModel,
+                         const BoundingBox  &searchSpace);
 
 bool shouldSampleFromGoal();
 

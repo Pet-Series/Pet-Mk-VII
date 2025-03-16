@@ -33,8 +33,9 @@ Graph::Graph(const VehicleState &startingState, const BoundingBox &boundingBox)
     storeNode(rootNode);
 }
 
-const Node &Graph::addNode(const VehicleState &state, const Path &pathFromParent,
-                           const Node &parent)
+const Node &Graph::addNode(const VehicleState &state,
+                           const Path         &pathFromParent,
+                           const Node         &parent)
 {
     Node node{};
     node.parentId       = parent.id;
@@ -43,7 +44,10 @@ const Node &Graph::addNode(const VehicleState &state, const Path &pathFromParent
     return storeNode(node);
 }
 
-Node &Graph::getNode(const NodeId &id) { return m_buckets[id.bucketIndex][id.internalIndex]; }
+Node &Graph::getNode(const NodeId &id)
+{
+    return m_buckets[id.bucketIndex][id.internalIndex];
+}
 
 const Node &Graph::getNode(const NodeId &id) const
 {

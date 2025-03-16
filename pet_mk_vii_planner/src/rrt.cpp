@@ -42,8 +42,9 @@ SearchResult search(const Goal &goal, Graph &tree, const SearchContext &context)
     return SearchResult{{}, diag};
 }
 
-VehicleState sampleState(const Goal &goal, const VehicleModel &vehicleModel,
-                         const BoundingBox &searchSpace)
+VehicleState sampleState(const Goal         &goal,
+                         const VehicleModel &vehicleModel,
+                         const BoundingBox  &searchSpace)
 {
     if (shouldSampleFromGoal())
     {

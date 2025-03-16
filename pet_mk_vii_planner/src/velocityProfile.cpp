@@ -11,13 +11,18 @@ namespace pet::rrt
 namespace
 {
 
-template <typename T> constexpr T square(T x) { return x * x; }
+template <typename T> constexpr T square(T x)
+{
+    return x * x;
+}
 
 } // namespace
 
 std::vector<double> computeVelocityProfile(const std::vector<double> &timeRatios,
-                                           double totalDistance, double startVel, double endVel,
-                                           const VehicleModel &vehicleModel)
+                                           double                     totalDistance,
+                                           double                     startVel,
+                                           double                     endVel,
+                                           const VehicleModel        &vehicleModel)
 {
     /// TODO: Handle negative start- and end- velocities.
     std::vector<double> velocitySamples{};
@@ -48,14 +53,15 @@ std::vector<double> computeVelocityProfile(const std::vector<double> &timeRatios
 
     // Create vectors with x and y values of velocity trapezoid that we can use to
     // interpolate.
-    const std::vector<double> samplePoints = {0.0, accelerationDuration,
-                                              accelerationDuration + cruiseDuration, totalDuration};
-    const std::vector<double> sampleValues = {startVel, vehicleModel.maxSpeed,
-                                              vehicleModel.maxSpeed, endVel};
+    const std::vector<double> samplePoints = {
+        0.0, accelerationDuration, accelerationDuration + cruiseDuration, totalDuration};
+    const std::vector<double> sampleValues = {
+        startVel, vehicleModel.maxSpeed, vehicleModel.maxSpeed, endVel};
 
     std::vector<double> queryPoints(timeRatios.size());
-    std::transform(timeRatios.cbegin(), timeRatios.cend(), queryPoints.begin(),
-                   [&](double ratio) { return ratio * totalDuration; });
+    std::transform(timeRatios.cbegin(), timeRatios.cend(), queryPoints.begin(), [&](double ratio) {
+        return ratio * totalDuration;
+    });
 
     velocitySamples = util::interpolate(samplePoints, sampleValues, queryPoints);
 

@@ -56,13 +56,14 @@ std::vector<double> interpolate(const std::vector<double> &samplePoints,
     };
 
     std::vector<double> queryValues(queryPoints.size());
-    std::transform(queryPoints.cbegin(), queryPoints.cend(), queryValues.begin(),
-                   computeQueryValue);
+    std::transform(
+        queryPoints.cbegin(), queryPoints.cend(), queryValues.begin(), computeQueryValue);
     return queryValues;
 }
 
 std::vector<rrt::VehicleState> interpolatePath(const rrt::VehicleState &start,
-                                               const rrt::VehicleState &end, int numberOfPoints)
+                                               const rrt::VehicleState &end,
+                                               int                      numberOfPoints)
 {
     assert(numberOfPoints > 1);
     std::vector<rrt::VehicleState> path{};

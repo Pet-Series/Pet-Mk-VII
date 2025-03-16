@@ -33,16 +33,40 @@ template <int degree> class Bezier
         assert(duration > 0); // Duration must be positive.
     }
 
-    double      duration() const { return m_duration; }
-    const auto &points() const { return m_points; }
+    double duration() const
+    {
+        return m_duration;
+    }
+    const auto &points() const
+    {
+        return m_points;
+    }
 
-    ugl::Vector3 start() const { return m_points.front(); }
-    ugl::Vector3 end() const { return m_points.back(); }
+    ugl::Vector3 start() const
+    {
+        return m_points.front();
+    }
+    ugl::Vector3 end() const
+    {
+        return m_points.back();
+    }
 
-    ugl::Vector3 value(double t) const { return evaluate(t); }
-    ugl::Vector3 position(double t) const { return evaluate(t); }
-    ugl::Vector3 velocity(double t) const { return getDerivative().position(t); }
-    ugl::Vector3 acceleration(double t) const { return getDerivative().velocity(t); }
+    ugl::Vector3 value(double t) const
+    {
+        return evaluate(t);
+    }
+    ugl::Vector3 position(double t) const
+    {
+        return evaluate(t);
+    }
+    ugl::Vector3 velocity(double t) const
+    {
+        return getDerivative().position(t);
+    }
+    ugl::Vector3 acceleration(double t) const
+    {
+        return getDerivative().velocity(t);
+    }
 
     /// @brief Calculates the curvature of the curve projected on the xy-plane.
     double planarCurvature(double t) const;
@@ -93,8 +117,7 @@ template <int degree> class Bezier
             ugl::Vector3 cj = ugl::Vector3::Zero();
             for (unsigned int i = 0; i <= j; ++i)
             {
-                cj +=
-                    std::pow(-1, i + j) * m_points[i] / (factorial(i) * factorial(j - i));
+                cj += std::pow(-1, i + j) * m_points[i] / (factorial(i) * factorial(j - i));
             }
             cj *= factorial(degree) / factorial(degree - j);
             cj /= std::pow(m_duration, j);
@@ -132,8 +155,7 @@ template <int degree> double Bezier<degree>::planarCurvature(double t) const
     const auto vel2d = ugl::Vector<2>{vel.x(), vel.y()};
 
     // General formula for curvature of curves in two dimensions.
-    const double curvature =
-        (vel.x() * acc.y() - vel.y() * acc.x()) / std::pow(vel2d.norm(), 3);
+    const double curvature = (vel.x() * acc.y() - vel.y() * acc.x()) / std::pow(vel2d.norm(), 3);
 
     return curvature;
 }
@@ -145,10 +167,9 @@ template <int degree> ugl::lie::Pose Bezier<degree>::planarPose(double t) const
         return std::arg(a);
     };
 
-    const auto vel     = velocity(t);
-    const auto heading = getHeading(ugl::Vector<2>{vel.x(), vel.y()});
-    const auto orientation =
-        ugl::UnitQuaternion{Eigen::AngleAxisd{heading, ugl::Vector3::UnitZ()}};
+    const auto vel         = velocity(t);
+    const auto heading     = getHeading(ugl::Vector<2>{vel.x(), vel.y()});
+    const auto orientation = ugl::UnitQuaternion{Eigen::AngleAxisd{heading, ugl::Vector3::UnitZ()}};
     return ugl::lie::Pose{orientation, position(t)};
 }
 
@@ -172,15 +193,20 @@ using PenticBezier = Bezier<5>;
 
 /// @brief Build a Bézier curve from a duration and position and velocity at
 /// start and end.
-CubicBezier buildCubicBezier(double duration, const ugl::Vector3 &pos0,
-                             const ugl::Vector3 &vel0, const ugl::Vector3 &pos1,
+CubicBezier buildCubicBezier(double              duration,
+                             const ugl::Vector3 &pos0,
+                             const ugl::Vector3 &vel0,
+                             const ugl::Vector3 &pos1,
                              const ugl::Vector3 &vel1);
 
 /// @brief Build a Bézier curve from a duration and position, velocity and acceleration at
 /// start and end.
-PenticBezier buildPenticBezier(double duration, const ugl::Vector3 &pos0,
-                               const ugl::Vector3 &vel0, const ugl::Vector3 &acc0,
-                               const ugl::Vector3 &pos1, const ugl::Vector3 &vel1,
+PenticBezier buildPenticBezier(double              duration,
+                               const ugl::Vector3 &pos0,
+                               const ugl::Vector3 &vel0,
+                               const ugl::Vector3 &acc0,
+                               const ugl::Vector3 &pos1,
+                               const ugl::Vector3 &vel1,
                                const ugl::Vector3 &acc1);
 
 } // namespace pet::rrt

@@ -16,8 +16,8 @@ enum class RangeMode
     IncludeEnd
 };
 
-std::vector<double> range(double start, double end, double step,
-                          RangeMode mode = RangeMode::ExcludeEnd)
+std::vector<double>
+range(double start, double end, double step, RangeMode mode = RangeMode::ExcludeEnd)
 {
     std::size_t length = static_cast<std::size_t>((end - start) / step);
     if (mode == RangeMode::IncludeEnd)

@@ -16,7 +16,10 @@ namespace pet::rrt
 namespace
 {
 
-template <typename ScalarType> constexpr int sign(ScalarType x) { return x < 0 ? -1 : 1; }
+template <typename ScalarType> constexpr int sign(ScalarType x)
+{
+    return x < 0 ? -1 : 1;
+}
 
 template <int degree> bool isCurvatureHigherThan(const Bezier<degree> &curve, double maxCurvature)
 {
@@ -46,8 +49,9 @@ template <int degree> bool isCurvatureHigherThan(const Bezier<degree> &curve, do
 }
 
 template <int degree>
-double getPlanarForwardVelocity(const Bezier<degree> &bezier, const ugl::lie::Rotation &orientation,
-                                double t)
+double getPlanarForwardVelocity(const Bezier<degree>     &bezier,
+                                const ugl::lie::Rotation &orientation,
+                                double                    t)
 {
     const ugl::Vector3 globalVel = bezier.velocity(t);
     const ugl::Vector3 localVel  = orientation.inverse() * globalVel;
@@ -55,8 +59,11 @@ double getPlanarForwardVelocity(const Bezier<degree> &bezier, const ugl::lie::Ro
 }
 
 template <int degree>
-Path computePath(const Bezier<degree> &bezier, const VehicleState &startState,
-                 const VehicleState &endState, int numberOfPoints, const VehicleModel &vehicleModel)
+Path computePath(const Bezier<degree> &bezier,
+                 const VehicleState   &startState,
+                 const VehicleState   &endState,
+                 int                   numberOfPoints,
+                 const VehicleModel   &vehicleModel)
 {
     assert(numberOfPoints > 1);
 

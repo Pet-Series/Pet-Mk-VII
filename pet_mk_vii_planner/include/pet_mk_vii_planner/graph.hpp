@@ -33,8 +33,7 @@ class Graph
   public:
     Graph(const VehicleState &startingState, const BoundingBox &boundingBox);
 
-    const Node &addNode(const VehicleState &state, const Path &pathFromParent,
-                        const Node &parent);
+    const Node &addNode(const VehicleState &state, const Path &pathFromParent, const Node &parent);
 
     Node       &getNode(const NodeId &id);
     const Node &getNode(const NodeId &id) const;
@@ -56,8 +55,7 @@ class Graph
     /// @brief Get pair of 2D bucket indices from state.
     std::pair<int, int> findBucketIndexPair(const VehicleState &state) const;
 
-    std::optional<Node>
-    sampleFromBuckets(const std::vector<std::size_t> &bucketIndices) const;
+    std::optional<Node> sampleFromBuckets(const std::vector<std::size_t> &bucketIndices) const;
 
   private:
     std::vector<std::vector<Node>> m_buckets;

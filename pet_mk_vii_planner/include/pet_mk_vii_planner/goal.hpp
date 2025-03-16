@@ -10,7 +10,7 @@ namespace pet::rrt
 class Goal
 {
   public:
-    explicit Goal(const ugl::lie::Pose &targetPose) : m_targetPose(targetPose){};
+    explicit Goal(const ugl::lie::Pose &targetPose) : m_targetPose(targetPose) {};
 
     VehicleState sampleState() const;
 

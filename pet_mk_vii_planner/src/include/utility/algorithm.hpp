@@ -25,7 +25,8 @@ constexpr void adjacent_for_each(ForwardIt first, ForwardIt last, BinaryFunction
 }
 
 template <typename ForwardIt, typename UnaryFunction>
-[[nodiscard]] constexpr ForwardIt min_element_transform(ForwardIt first, ForwardIt last,
+[[nodiscard]] constexpr ForwardIt min_element_transform(ForwardIt     first,
+                                                        ForwardIt     last,
                                                         UnaryFunction transform)
 {
     using ResultType = std::invoke_result_t<UnaryFunction>;

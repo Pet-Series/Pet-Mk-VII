@@ -7,11 +7,17 @@ namespace pet::rrt
 namespace
 {
 
-template <typename ScalarType> constexpr ScalarType square(ScalarType x) { return x * x; }
+template <typename ScalarType> constexpr ScalarType square(ScalarType x)
+{
+    return x * x;
+}
 
 } // namespace
 
-VehicleState Goal::sampleState() const { return VehicleState{m_targetPose, m_targetSpeed}; }
+VehicleState Goal::sampleState() const
+{
+    return VehicleState{m_targetPose, m_targetSpeed};
+}
 
 bool Goal::isReached(const VehicleState &state) const
 {

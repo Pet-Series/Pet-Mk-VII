@@ -52,11 +52,11 @@ geometry_msgs::msg::Pose toPoseMsg(const ugl::lie::Pose &pose)
 
 void appendToLineList(const rrt::Path &path, std::vector<geometry_msgs::msg::Point> &points)
 {
-    util::adjacent_for_each(path.cbegin(), path.cend(),
-                            [&points](const auto &start, const auto &end) {
-                                points.push_back(toPointMsg(start.pose.position()));
-                                points.push_back(toPointMsg(end.pose.position()));
-                            });
+    util::adjacent_for_each(
+        path.cbegin(), path.cend(), [&points](const auto &start, const auto &end) {
+            points.push_back(toPointMsg(start.pose.position()));
+            points.push_back(toPointMsg(end.pose.position()));
+        });
 }
 
 } // namespace
