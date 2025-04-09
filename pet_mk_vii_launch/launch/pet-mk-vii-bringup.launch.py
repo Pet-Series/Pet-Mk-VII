@@ -7,6 +7,8 @@
 #
 # ROS2 lanchfile
 # Launches ALL nodes for Pet-Mk.VII (aka "The Ackermann steering vehicle")
+# This is the main launch-file when bring-up the robot.
+# This is the entry point for Docker <ros-entrypoint.sh>
 # 
 # 1) Remember to add '<exec_depend>....</exec_depend>' in package.xml
 # 2) Remember to add '(os.path.join('share', package_name), glob('launch/*.launch.py'))' in setup.py
