@@ -14,7 +14,7 @@ from launch.event_handlers import OnProcessExit
 
 from launch_ros.actions import Node
 
-
+# def load_robot_description(robot_description_path, vehicle_params_path):
 def load_robot_description(robot_description_path, vehicle_params_path):
     """
     Loads the robot description from a Xacro file, using parameters from a YAML file.
@@ -97,27 +97,33 @@ def generate_launch_description():
     yaw = LaunchConfiguration('Y')
 
     # Define the robot's and package name
-    robot_name = "ackermann_steering_vehicle"
-    robot_pkg_path = get_package_share_directory(robot_name)
+    # robot_name = "ackermann_steering_vehicle"
+    robot_name = "pet-mk-vii"
+    # robot_pkg_path = get_package_share_directory(robot_name)
+    # print(">>>>>>robot_pkg_path:", robot_pkg_path )
 
     # Set paths to Xacro model and configuration files
-    robot_description_path = os.path.join(robot_pkg_path, 'model',
-                                          'vehicle.xacro')
+    description_pkg_path = get_package_share_directory("pet_mk_vii_simulation")
+    robot_description_path = os.path.join(description_pkg_path, 'model','pet-mk-vii.xacro')
+    print(">>>>>>robot_description_path:", robot_description_path )
 
-    gz_bridge_params_path = os.path.join(robot_pkg_path, 'config',
-                                         'ros_gz_bridge.yaml')
+    gz_bridge_pkg_path = get_package_share_directory("pet_mk_vii_simulation")
+    gz_bridge_params_path = os.path.join(gz_bridge_pkg_path, 'config','ros_gz_bridge.yaml')
+    print(">>>>>>gz_bridge_params_path:", gz_bridge_params_path )
 
-    vehicle_params_path = os.path.join(robot_pkg_path, 'config',
-                                       'parameters.yaml')
+    # Set the path to the vehicle parameters
+    params_pkg_path = get_package_share_directory("pet_mk_vii_simulation")
+    print(">>>>>>params_pkg_path:", params_pkg_path)
+
+    vehicle_params_path = os.path.join(params_pkg_path, 'config','pet-mk-vii-parameters.yaml')
+    print(">>>>>>vehicle_params_path:",vehicle_params_path)
+    
     # Load URDF
-    robot_description = load_robot_description(robot_description_path,
-                                               vehicle_params_path)
+    robot_description = load_robot_description(robot_description_path, vehicle_params_path)
 
     # Prepare to include the Gazebo simulation launch file
     gazebo_pkg_launch = PythonLaunchDescriptionSource(
-        os.path.join(get_package_share_directory('ros_gz_sim'),
-                     'launch',
-                     'gz_sim.launch.py'))
+        os.path.join(get_package_share_directory('ros_gz_sim'),'launch', 'gz_sim.launch.py'))
 
     # Include the Gazebo launch description
     gazebo_launch = IncludeLaunchDescription(
