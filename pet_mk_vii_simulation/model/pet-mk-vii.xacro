@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<robot name="ackermann_steering_vehicle" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="gazebo_ackermann_steering_vehicle" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- Arguments -->
     <xacro:arg name="body_length" default="2.0" />
@@ -454,7 +454,7 @@
         </plugin>
 
         <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-            <parameters>$(find ackermann_steering_vehicle)/config/gz_ros2_control.yaml</parameters>
+            <parameters>$(find gazebo_ackermann_steering_vehicle)/config/gz_ros2_control.yaml</parameters>
         </plugin>
 
         <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">

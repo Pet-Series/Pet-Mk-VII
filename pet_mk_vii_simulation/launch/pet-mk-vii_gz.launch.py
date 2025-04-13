@@ -164,7 +164,7 @@ def generate_launch_description():
     joint_state, forward_velocity, forward_position = start_vehicle_control()
 
     # Load vehicle controller node
-    vehicle_controller_node = Node(package='ackermann_steering_vehicle',
+    vehicle_controller_node = Node(package='gazebo_ackermann_steering_vehicle',
                                    executable='vehicle_controller',
                                    parameters=[vehicle_params_path],
                                    output='screen')
