@@ -163,11 +163,11 @@ def generate_launch_description():
     # Start controllers
     joint_state, forward_velocity, forward_position = start_vehicle_control()
 
-    # Load vehicle controller node
-    vehicle_controller_node = Node(package='gazebo_ackermann_steering_vehicle',
-                                   executable='vehicle_controller',
-                                   parameters=[vehicle_params_path],
-                                   output='screen')
+    # Load Ackermann controller node
+    ackermann_controller_node = Node(package='pet_mk_vii_simulation',
+                                     executable='ackermann_controller',
+                                     parameters=[vehicle_params_path],
+                                     output='screen')
 
     # Create the launch description
     launch_description = LaunchDescription([
@@ -188,7 +188,7 @@ def generate_launch_description():
         yaw_arg,
         spawn_model_gazebo_node,
         robot_state_publisher_node,
-        vehicle_controller_node,
+        ackermann_controller_node,
         gz_bridge_node])
 
     return launch_description

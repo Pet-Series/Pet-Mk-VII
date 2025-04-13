@@ -1,15 +1,29 @@
 cmake_minimum_required(VERSION 3.8)
 project(pet_mk_vii_simulation)
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
-
-# find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+
+find_package(std_msgs REQUIRED)
+
+find_package(rclcpp REQUIRED)
+
+add_library(project_options INTERFACE)
+target_compile_features(project_options INTERFACE cxx_std_17)
+target_compile_options(project_options
+  INTERFACE
+    -Wall -Wextra -Wpedantic
+    -Wshadow
+    -Wnon-virtual-dtor
+    -Wcast-align
+    -Wunused
+    -Woverloaded-virtual
+    -Wconversion
+    -Wnull-dereference
+    -Wdouble-promotion
+    -Wmisleading-indentation
+)
+
+add_subdirectory(src)
 
 install(
   DIRECTORY launch model config
