@@ -1,0 +1,42 @@
+# This file is used to configure the Gazebo ROS2 Control plugin for the Pet MK VII robot.
+# It defines the parameters for the robot's controllers, including the type of controllers, their update rates, and the joints they control.
+# The parameters are used to set up the robot's control system in the Gazebo simulation environment.
+# Normally this file is used in conjunction with the URDF or XACRO file
+#   Example: Read/Loaded by "../pet_mk_vii_simulation/model/pet-mk-vii.xacro" file.
+controller_manager:
+  ros__parameters:
+    update_rate: 100 # Hz
+
+    forward_velocity_controller:
+      type: forward_command_controller/ForwardCommandController
+
+    forward_position_controller:
+      type: forward_command_controller/ForwardCommandController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+forward_velocity_controller:
+  ros__parameters:
+    joints:
+      - rear_left_wheel_joint
+      - rear_right_wheel_joint
+    interface_name: velocity
+    command_interfaces:
+      - velocity
+    state_interfaces:
+      - position
+      - velocity
+
+forward_position_controller:
+  ros__parameters:
+    joints:
+      - front_left_steering_joint
+      - front_right_steering_joint
+    interface_name: position
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+
