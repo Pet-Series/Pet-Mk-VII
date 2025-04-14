@@ -45,7 +45,7 @@ The main objective/scope for this repository is to control the part of the softw
    ...
 ~/ws_ros2_jazzy/src$ git clone https://github.com/lucasmazzetto/gazebo_ackermann_steering_vehicle.git
    ...
-~/ws_ros2_jazzy/src$
+~/ws_ros2_jazzy/src$ cd ..
 ```
 
 ## Build workspace
@@ -54,6 +54,8 @@ The main objective/scope for this repository is to control the part of the softw
 ~/ws_ros2_jazzy$ source /opt/ros/jazzy/setup.bash
    ...
 ~/ws_ros2_jazzy$ colcon build
+ OR
+~/ws_ros2_jazzy$ colcon build --packages-select pet_mk_vii_simulation
    ...
 ~/ws_ros2_jazzy$ source install/setup.bash
 ```
