@@ -1,5 +1,16 @@
 <?xml version="1.0"?>
 
+<!-- 
+    This XACRO file defines a Ackermann steering vehicle model.
+    - Physical sizes and properties are defined as arguments (Used by Gazebo and RViz).
+      The values are in SI units (meters, kilograms, seconds, etc.) unless otherwise specified.
+    - Transform tree with links and joints is defined (Used by Gazebo, RViz and the IRL robot).
+    - Gazebo-specific features are defined (Used by Gazebo).
+    - ROS2 control is defined (Used by Gazebo and the IRL robot).
+    - Gazebo plugins are defined (Used by Gazebo).
+    - Camera is defined (Used by Gazebo).
+-->
+
 <robot name="ackermann_steering_vehicle" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- Arguments -->
@@ -453,8 +464,9 @@
             <joint_name>rear_right_wheel_joint</joint_name>
         </plugin>
 
+        <!-- Find and loads the "../pet_mk_vii_simulation/config/gz_ros2_control.yaml" file -->
         <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-            <parameters>$(find ackermann_steering_vehicle)/config/gz_ros2_control.yaml</parameters>
+            <parameters>$(find pet_mk_vii_simulation)/config/gz_ros2_control.yaml</parameters>
         </plugin>
 
         <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">

@@ -37,7 +37,7 @@ def load_robot_description(robot_description_path, vehicle_params_path):
 
 def start_vehicle_control():
     """
-    Starts the necessary controllers for the vehicle's operation in ROS 2.
+    Starts the necessary controllers for the vehicle's operation in ROS2.
 
     @return: A tuple containing ExecuteProcess actions for the joint state, forward velocity, 
              and forward position controllers.
@@ -63,67 +63,60 @@ def start_vehicle_control():
 
 
 def generate_launch_description():
-    # Define a launch argument for the world file, defaulting to "empty.sdf"
-    world_arg = DeclareLaunchArgument(
-        'world', default_value='empty.sdf',
-        description='Specify the world file for Gazebo (e.g., empty.sdf)')
+    """   
+    Define a launch argument for the world file, defaulting to "empty.sdf"
+    This allows the user to specify a different world file when launching...
+
+    @return: A LaunchDescription object containing the launch configuration.
+    """
+    world_arg = DeclareLaunchArgument('world', default_value='empty.sdf', description='Specify the world file for Gazebo (e.g., empty.sdf)')
 
     # Define launch arguments for initial pose
-    x_arg = DeclareLaunchArgument('x', default_value='0.0',
-                                  description='Initial X position')
-
-    y_arg = DeclareLaunchArgument('y', default_value='0.0',
-                                  description='Initial Y position')
-
-    z_arg = DeclareLaunchArgument('z', default_value='0.1',
-                                  description='Initial Z position')
-
-    roll_arg = DeclareLaunchArgument('R', default_value='0.0',
-                                     description='Initial Roll')
-
-    pitch_arg = DeclareLaunchArgument('P', default_value='0.0',
-                                      description='Initial Pitch')
-
-    yaw_arg = DeclareLaunchArgument('Y', default_value='0.0',
-                                    description='Initial Yaw')
+    x_arg =     DeclareLaunchArgument('x', default_value='0.0', description='Initial X position')
+    y_arg =     DeclareLaunchArgument('y', default_value='0.0', description='Initial Y position')
+    z_arg =     DeclareLaunchArgument('z', default_value='0.1', description='Initial Z position')
+    roll_arg =  DeclareLaunchArgument('R', default_value='0.0', description='Initial Roll')
+    pitch_arg = DeclareLaunchArgument('P', default_value='0.0', description='Initial Pitch')
+    yaw_arg =   DeclareLaunchArgument('Y', default_value='0.0', description='Initial Yaw')
 
     # Retrieve launch configurations
     world_file = LaunchConfiguration('world')
-    x = LaunchConfiguration('x')
-    y = LaunchConfiguration('y')
-    z = LaunchConfiguration('z')
-    roll = LaunchConfiguration('R')
+    x =     LaunchConfiguration('x')
+    y =     LaunchConfiguration('y')
+    z =     LaunchConfiguration('z')
+    roll =  LaunchConfiguration('R')
     pitch = LaunchConfiguration('P')
-    yaw = LaunchConfiguration('Y')
+    yaw =   LaunchConfiguration('Y')
 
     # Define the robot's and package name
-    # robot_name = "ackermann_steering_vehicle"
     robot_name = "pet-mk-vii"
-    # robot_pkg_path = get_package_share_directory(robot_name)
-    # print(">>>>>>robot_pkg_path:", robot_pkg_path )
+
+    # TODO: Called THREE-times "get_package_share_directory("pet_mk_vii_simulation")"
 
     # Set paths to Xacro model and configuration files
     description_pkg_path = get_package_share_directory("pet_mk_vii_simulation")
     robot_description_path = os.path.join(description_pkg_path, 'model','pet-mk-vii.xacro')
     print(">>>>>>robot_description_path:", robot_description_path )
 
+    # Set the path to the Gazebo bridge/interface file
     gz_bridge_pkg_path = get_package_share_directory("pet_mk_vii_simulation")
     gz_bridge_params_path = os.path.join(gz_bridge_pkg_path, 'config','ros_gz_bridge.yaml')
     print(">>>>>>gz_bridge_params_path:", gz_bridge_params_path )
 
     # Set the path to the vehicle parameters
     params_pkg_path = get_package_share_directory("pet_mk_vii_simulation")
-    print(">>>>>>params_pkg_path:", params_pkg_path)
-
     vehicle_params_path = os.path.join(params_pkg_path, 'config','pet-mk-vii-parameters.yaml')
     print(">>>>>>vehicle_params_path:",vehicle_params_path)
     
-    # Load URDF
+    # Load URDF/.Xacro file + Vehicle parameters
     robot_description = load_robot_description(robot_description_path, vehicle_params_path)
 
-    # Prepare to include the Gazebo simulation launch file
-    gazebo_pkg_launch = PythonLaunchDescriptionSource(
-        os.path.join(get_package_share_directory('ros_gz_sim'),'launch', 'gz_sim.launch.py'))
+    # Prepare to include the Gazebo simulation launch file (from standard package)
+    gazebo_pkg_path = get_package_share_directory('ros_gz_sim')
+    gazebo_pkg_launch_path = os.path.join(gazebo_pkg_path, 'launch', 'gz_sim.launch.py')
+    print(">>>>>>gazebo_pkg_launch_path:", gazebo_pkg_launch_path)
+
+    gazebo_pkg_launch = PythonLaunchDescriptionSource(gazebo_pkg_launch_path)
 
     # Include the Gazebo launch description
     gazebo_launch = IncludeLaunchDescription(
@@ -153,7 +146,7 @@ def generate_launch_description():
                                           'use_sim_time': True}],
                                       output='screen')
 
-    # Create a node for the ROS-Gazebo bridge to handle message passing
+    # Create a node for the ROS2-Gazebo bridge to handle message passing
     gz_bridge_node = Node(package='ros_gz_bridge',
                           executable='parameter_bridge',
                           arguments=['--ros-args', '-p',
@@ -164,11 +157,11 @@ def generate_launch_description():
     joint_state, forward_velocity, forward_position = start_vehicle_control()
 
     # Load vehicle controller node
-    vehicle_controller_node = Node(package='ackermann_steering_vehicle',
+    vehicle_controller_node = Node(package='gazebo_ackermann_steering_vehicle',
                                    executable='vehicle_controller',
                                    parameters=[vehicle_params_path],
                                    output='screen')
-
+    
     # Create the launch description
     launch_description = LaunchDescription([
         RegisterEventHandler(

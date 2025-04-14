@@ -1,5 +1,10 @@
 /**:
   ros__parameters:
+    # To be used as input when building the URDF/.xacro model of the Pet MK VII robot.
+    # The parameters are used to set the physical properties of the robot and its components.
+    # The values are in SI units (meters, kilograms, seconds, etc.) unless otherwise specified.
+    # The parameters are used in the simulation environment to define the robot's behavior and characteristics.
+    
     # Body params
     body_length: 0.6 # Length of the vehicle's body [m]
     body_width: 0.18 # Width of the vehicle's body [m]
